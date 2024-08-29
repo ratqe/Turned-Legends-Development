@@ -129,8 +129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920315a0e005cc941bbdc79c5866c848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitName: Joe
-  unitLevel: 2
-  damage: 5
+  unitName: Timtam
+  unitLevel: 69
+  damage: 10
   maxHP: 30
   currentHP: 30
