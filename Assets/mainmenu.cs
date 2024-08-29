@@ -7,7 +7,27 @@ public class mainmenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadSceneAsync(1);
+        SceneManager.LoadScene("Battle");
+    }
+    
+    public void GoToSettingMenu()
+    {
+        SceneManager.LoadScene("Setting Menu");
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
+    }
+
+    public void GoToVolumeMenu()
+    {
+        SceneManager.LoadScene("Volume Menu");
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
 }
