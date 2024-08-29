@@ -743,6 +743,7 @@ GameObject:
   m_Component:
   - component: {fileID: 754815014}
   - component: {fileID: 754815013}
+  - component: {fileID: 754815015}
   m_Layer: 0
   m_Name: BattleSystem
   m_TagString: Untagged
@@ -763,7 +764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4021111439873543613, guid: c1ae9989813fa8b4abc0ba3f0a900a63, type: 3}
-  enemyPrefab: {fileID: 6489588277039800768, guid: a0aff05ea9900db4fb145c4c1dfffaa1, type: 3}
+  enemyPrefab: {fileID: 6489588277039800768, guid: d2c86085afe03b74cb6d8d006c722da1, type: 3}
   playerBattleStation: {fileID: 1049972753}
   enemyBattleStation: {fileID: 1488597921}
   dialogueText: {fileID: 344498146}
@@ -785,6 +786,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &754815015
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754815012}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 76e4aab11a533da46b5bab97fb8815de, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &786471415
 GameObject:
   m_ObjectHideFlags: 0
