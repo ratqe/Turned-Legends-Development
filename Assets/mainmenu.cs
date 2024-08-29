@@ -20,6 +20,11 @@ public class mainmenu : MonoBehaviour
         SceneManager.LoadScene("Main Menu");
     }
 
+    public void GoToVolumeMenu()
+    {
+        SceneManager.LoadScene("Volume Menu");
+    }
+
     public void QuitGame()
     {
         Application.Quit();
