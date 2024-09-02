@@ -118,7 +118,7 @@ public class BattleSystem : MonoBehaviour
     {
         if (state == BattleState.WON)
         {
-            dialogueText.text = "You won the battle congrats!!!!";
+            dialogueText.text = "You won the battle congrats!!!! gjg";
         }
         else if (state == BattleState.LOST)
         {
