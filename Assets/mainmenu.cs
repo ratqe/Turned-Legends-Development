@@ -7,9 +7,14 @@ public class mainmenu : MonoBehaviour
 {
     public void PlayGame()
     {
+        SceneManager.LoadScene("Lobby");
+    }
+
+    public void Test()
+    {
         SceneManager.LoadScene("Battle");
     }
-    
+
     public void GoToSettingMenu()
     {
         SceneManager.LoadScene("Setting Menu");
