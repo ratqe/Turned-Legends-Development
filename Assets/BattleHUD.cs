@@ -15,8 +15,8 @@ public class BattleHUD : MonoBehaviour
     {
         nameText.text = unit.unitName;
         levelText.text = "Lvl " + unit.unitLevel;
-        hpSlider.maxValue = unit.maxHP;
-        hpSlider.value = unit.currentHP;
+        hpSlider.maxValue = unit.getHealth;
+        hpSlider.value = unit.decrementHealth;
     }
 
 
