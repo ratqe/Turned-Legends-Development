@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
@@ -117,8 +119,6 @@ public class BattleSystem : MonoBehaviour
 
     }
 
-
-
     public void OnAttackButton()
     {
         if (state != BattleState.PLAYERTURN)
@@ -127,6 +127,20 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(PlayerAttack());
     }
 
+    public void OnFleeButton()
+    {
+        if (state != BattleState.PLAYERTURN)
+        return;
+
+        dialogueText.text = "You fled yippe";
+        StartCoroutine(FleeBattle());
+    }
+
+    IEnumerator FleeBattle()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Lobby");
+    }
 
     void EndBattle()
     {
