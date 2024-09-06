@@ -9,16 +9,16 @@ public class Unit : MonoBehaviour
 
     public int damage;
 
-    public int maxHP;
-    public int currentHP;
+    public int getHealth;
+    public int decrementHealth;
 
 
 
     public bool TakeDamage(int dmg)
     {
-        currentHP -= dmg;
+        decrementHealth -= dmg;
 
-        if (currentHP <= 0)
+        if (decrementHealth <= 0)
             return true;
         else
             return false;

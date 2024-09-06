@@ -24,6 +24,8 @@ public class BattleSystem : MonoBehaviour
 
     public BattleState state;
 
+    private Animator anim;
+    private Animator playerAnim;
 
     void Start()
     {
@@ -38,6 +40,9 @@ public class BattleSystem : MonoBehaviour
 
         GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
         enemyUnit = enemyGO.GetComponent<Unit>();
+
+        anim = enemyGO.GetComponent<Animator>();
+        playerAnim = playerGO.GetComponent<Animator>();
 
         dialogueText.text = "A wild " + enemyUnit.unitName + " approaches fr";
 
@@ -59,9 +64,12 @@ public class BattleSystem : MonoBehaviour
      
     IEnumerator PlayerAttack()
     {
+
+        playerAnim.SetTrigger("Player1Attack");
+        yield return new WaitForSeconds(1f);
         bool isDead = enemyUnit.TakeDamage(playerUnit.damage);
 
-        enemyHUD.SetHP(enemyUnit.currentHP);
+        enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "The attack is successful!";
 
         yield return new WaitForSeconds(2f);
@@ -76,17 +84,21 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
+
+        
     }
 
     IEnumerator EnemyTurn()
     {
+
+        anim.SetTrigger("Enemy1Attack");
         dialogueText.text = enemyUnit.unitName + " attacks!";
 
         yield return new WaitForSeconds(1f);
 
         bool isDead = playerUnit.TakeDamage(enemyUnit.damage);
 
-        playerHUD.SetHP(playerUnit.currentHP);
+        playerHUD.SetHP(playerUnit.decrementHealth);
 
         yield return new WaitForSeconds(1f);
 
@@ -100,6 +112,8 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.PLAYERTURN;
             PlayerTurn();
         }
+
+        
 
     }
 
@@ -118,7 +132,7 @@ public class BattleSystem : MonoBehaviour
     {
         if (state == BattleState.WON)
         {
-            dialogueText.text = "You won the battle congrats!!!!";
+            dialogueText.text = "You won the battle congrats!!!! gjg";
         }
         else if (state == BattleState.LOST)
         {

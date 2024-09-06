@@ -48,8 +48,8 @@ MonoBehaviour:
   unitName: Ivon
   unitLevel: 5
   damage: 5
-  maxHP: 30
-  currentHP: 30
+  getHealth: 30
+  decrementHealth: 30
 --- !u!1 &7175361822001401601
 GameObject:
   m_ObjectHideFlags: 0
