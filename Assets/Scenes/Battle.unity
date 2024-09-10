@@ -855,6 +855,7 @@ MonoBehaviour:
   dialogueText: {fileID: 344498146}
   playerHUD: {fileID: 161537615}
   enemyHUD: {fileID: 1710025460}
+  newSong: {fileID: 8300000, guid: 0fb87428b3893934ea0691e13a108575, type: 3}
   state: 0
 --- !u!4 &754815014
 Transform:
