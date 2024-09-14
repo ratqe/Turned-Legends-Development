@@ -22,7 +22,7 @@ public class BattleSystem : MonoBehaviour
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
 
-
+    public AudioClip newSong;
 
     public BattleState state;
 
@@ -33,6 +33,11 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.START;
         StartCoroutine(SetupBattle());
+        MusicManager musicManager = FindObjectOfType<MusicManager>();
+        if (musicManager != null)
+        {
+            musicManager.ChangeSong(newSong);  // Play the new song in this specific scene
+        }
     }
 
     IEnumerator SetupBattle()
@@ -79,7 +84,7 @@ public class BattleSystem : MonoBehaviour
         if (isDead)
         {
             state = BattleState.WON;
-            EndBattle();
+            StartCoroutine(EndBattle());
         }
         else
         {
@@ -107,7 +112,7 @@ public class BattleSystem : MonoBehaviour
         if (isDead)
         {
             state = BattleState.LOST;
-            EndBattle();
+            StartCoroutine(EndBattle());
         }
         else
         {
@@ -140,9 +145,15 @@ public class BattleSystem : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("Lobby");
+
+        MusicManager musicManager = FindObjectOfType<MusicManager>();
+        if (musicManager != null)
+        {
+            musicManager.RevertToOriginalSong();  
+        }
     }
 
-    void EndBattle()
+    IEnumerator EndBattle()
     {
         if (state == BattleState.WON)
         {
@@ -152,5 +163,18 @@ public class BattleSystem : MonoBehaviour
         {
             dialogueText.text = "You were defeated :/";
         }
+
+        yield return new WaitForSeconds(3f);
+        
+        SceneManager.LoadScene("Lobby");
+        MusicManager musicManager = FindObjectOfType<MusicManager>();
+        if (musicManager != null)
+        {
+            musicManager.RevertToOriginalSong();
+        }
+
     }
+
+
 }
+
