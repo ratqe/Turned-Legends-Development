@@ -452,8 +452,8 @@ Transform:
   m_GameObject: {fileID: 345929418}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.56, y: 0.63, z: 0.6}
+  m_LocalPosition: {x: 0.0125, y: 0, z: 0}
+  m_LocalScale: {x: 0.6717219, y: 0.63, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -855,6 +855,7 @@ MonoBehaviour:
   dialogueText: {fileID: 344498146}
   playerHUD: {fileID: 161537615}
   enemyHUD: {fileID: 1710025460}
+  newSong: {fileID: 8300000, guid: 0fb87428b3893934ea0691e13a108575, type: 3}
   state: 0
 --- !u!4 &754815014
 Transform:
