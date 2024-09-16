@@ -7,27 +7,27 @@ public class mainmenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene("Lobby");
+        StartCoroutine(LoadScene("Lobby", 0.1f)); 
     }
 
     public void Test()
     {
-        SceneManager.LoadScene("Battle");
+        StartCoroutine(LoadScene("Battle", 0.1f)); 
     }
 
     public void GoToSettingMenu()
     {
-        SceneManager.LoadScene("Setting Menu");
+        StartCoroutine(LoadScene("Setting Menu", 0.1f)); 
     }
 
     public void GoToMainMenu()
     {
-        SceneManager.LoadScene("Main Menu");
+        StartCoroutine(LoadScene("Main Menu", 0.1f)); 
     }
 
     public void GoToVolumeMenu()
     {
-        SceneManager.LoadScene("Volume Menu");
+        StartCoroutine(LoadScene("Volume Menu", 0.1f)); 
     }
 
     public void QuitGame()
@@ -35,4 +35,10 @@ public class mainmenu : MonoBehaviour
         Application.Quit();
     }
 
+    // delay added for the button sound to play before changing scenes
+    private IEnumerator LoadScene(string scene, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(scene);
+    }
 }
