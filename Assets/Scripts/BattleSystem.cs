@@ -28,6 +28,8 @@ public class BattleSystem : MonoBehaviour
 
     private Animator anim;
     private Animator playerAnim;
+    public Text playerDamageText;
+    public Text enemyDamageText;
 
     void Start()
     {
@@ -71,15 +73,24 @@ public class BattleSystem : MonoBehaviour
      
     IEnumerator PlayerAttack()
     {
+        int damage = playerUnit.damage;  // player damage
 
+        // triggering animation
         playerAnim.SetTrigger("Player1Attack");
+        // letting the animation play first then dmg applied
         yield return new WaitForSeconds(1f);
-        bool isDead = enemyUnit.TakeDamage(playerUnit.damage);
 
+        //dmg dealt by the player
+        enemyDamageText.text = "-" + damage.ToString() + " HP";
+
+        bool isDead = enemyUnit.TakeDamage(playerUnit.damage);
         enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "The attack is successful!";
 
         yield return new WaitForSeconds(2f);
+        
+        // will hide dmg after
+        enemyDamageText.text = "";
 
         if (isDead)
         {
@@ -97,17 +108,21 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
+        int damage = enemyUnit.damage;
 
         anim.SetTrigger("Enemy1Attack");
         dialogueText.text = enemyUnit.unitName + " attacks!";
 
         yield return new WaitForSeconds(1f);
 
+        playerDamageText.text = "-" + damage.ToString() + " HP";
+
         bool isDead = playerUnit.TakeDamage(enemyUnit.damage);
 
         playerHUD.SetHP(playerUnit.decrementHealth);
 
         yield return new WaitForSeconds(1f);
+        playerDamageText.text = "";
 
         if (isDead)
         {
