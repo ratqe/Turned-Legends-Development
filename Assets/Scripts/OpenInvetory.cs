@@ -5,14 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class OpenInvetory : MonoBehaviour
 {
-    public GameObject red;
+    public GameObject InventoryMenu;
 
     public bool isPaused;
 
     // Start is called before the first frame update
     void Start()
     {
-        red.SetActive(false);
+        InventoryMenu.SetActive(false);
     }
 
     // Update is called once per frame
@@ -33,14 +33,14 @@ public class OpenInvetory : MonoBehaviour
 
     public void PauseGame()
     {
-        red.SetActive(true); // Activate the menu
+        InventoryMenu.SetActive(true); // Activate the menu
         Time.timeScale = 0f; // Stop the in-game clock
         isPaused = true;
     }
 
     public void ResumeGame()
     {
-        red.SetActive(false); // Deactivate the menu
+        InventoryMenu.SetActive(false); // Deactivate the menu
         Time.timeScale = 1f; // Resume the in-game clock
         isPaused = false;
     }
