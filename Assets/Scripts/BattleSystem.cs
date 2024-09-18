@@ -261,6 +261,51 @@ public class BattleSystem : MonoBehaviour
         dialogueText.text = "You fled yippe";
         StartCoroutine(FleeBattle());
     }
+    public void OnDefendButton()
+    {
+        if (state != BattleState.PLAYERTURN)
+            return;
+
+        StartCoroutine(PlayerDefend());
+    }
+
+    IEnumerator PlayerDefend()
+    {
+        // Move the player upwards before defending
+        Vector3 originalPosition = playerBattleStation.position;
+        Vector3 defendPosition = originalPosition + new Vector3(0, 1f, 0);  // Move player 1 unit upwards
+
+        float elapsedTime = 0f;
+        float moveDuration = 0.4f;  // Duration for the movement
+
+        // Smoothly move the player upwards
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(originalPosition, defendPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        dialogueText.text = "Player is defending!";
+
+        yield return new WaitForSeconds(1f);  // Hold the defend position for 1 second
+
+        // Smoothly move the player back to the original position
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(defendPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);  // Pause briefly before ending the player's turn
+
+        // End the player's turn
+        state = BattleState.ENEMYTURN;
+        StartCoroutine(EnemyTurn());
+    }
+
 
     IEnumerator FleeBattle()
     {
