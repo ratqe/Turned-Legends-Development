@@ -35,10 +35,10 @@ public class OpenInvetory : MonoBehaviour
     {
         // Activate the menu
         InventoryMenu.SetActive(true);
-       
+
         // Stop the in-game Clock
         Time.timeScale = 0f;
-        
+
         isOpen = true;
     }
 
@@ -49,7 +49,7 @@ public class OpenInvetory : MonoBehaviour
 
         // Resume the in-game clock
         Time.timeScale = 1f;
-        
+
         isOpen = false;
     }
 }
