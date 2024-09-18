@@ -98,7 +98,7 @@ public class BattleSystem : MonoBehaviour
 
         // Let the animation play first, then apply damage
         yield return new WaitForSeconds(1f);
-         
+
         // Damage dealt by the player
         enemyDamageText.text = "-" + damage.ToString() + " HP";
 
@@ -262,11 +262,27 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(FleeBattle());
     }
 
-
-
     IEnumerator FleeBattle()
     {
-        yield return new WaitForSeconds(2f);
+        // Define how far the player will dash backwards and how long it will take
+        Vector3 originalPosition = playerBattleStation.position;
+        Vector3 fleePosition = originalPosition - new Vector3(5f, 0, 0);  // Dash 1 unit backward
+
+        float elapsedTime = 0f;
+        float dashDuration = 0.5f;  // Duration for the dash
+
+        // Smoothly move the player backward
+        while (elapsedTime < dashDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(originalPosition, fleePosition, (elapsedTime / dashDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // After the dash is complete, pause briefly before switching scenes
+        yield return new WaitForSeconds(1f);
+
+        // Load the Lobby scene
         SceneManager.LoadScene("Lobby");
 
         MusicManager musicManager = FindObjectOfType<MusicManager>();
@@ -275,6 +291,7 @@ public class BattleSystem : MonoBehaviour
             musicManager.RevertToOriginalSong();
         }
     }
+
 
     IEnumerator EndBattle()
     {
