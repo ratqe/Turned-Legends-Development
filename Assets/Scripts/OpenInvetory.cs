@@ -34,7 +34,7 @@ public class OpenInvetory : MonoBehaviour
     public void PauseGame()
     {
         InventoryMenu.SetActive(true); // Activate the menu
-        Time.timeScale = 0f; // Stop the in-game clock
+        Time.timeScale = 0f; 
         isPaused = true;
     }
 
