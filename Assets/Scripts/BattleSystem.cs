@@ -12,6 +12,9 @@ public class BattleSystem : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject enemyPrefab;
 
+
+
+
     public Transform playerBattleStation;
     public Transform enemyBattleStation;
 
@@ -70,7 +73,7 @@ public class BattleSystem : MonoBehaviour
     {
         dialogueText.text = "Choose action:";
     }
-     
+
     IEnumerator PlayerAttack()
     {
         int damage = playerUnit.damage;  // player damage
@@ -88,7 +91,7 @@ public class BattleSystem : MonoBehaviour
         dialogueText.text = "The attack is successful!";
 
         yield return new WaitForSeconds(2f);
-        
+
         // will hide dmg after
         enemyDamageText.text = "";
 
@@ -103,7 +106,7 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(EnemyTurn());
         }
 
-        
+
     }
 
     IEnumerator EnemyTurn()
@@ -135,7 +138,7 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
 
-        
+
 
     }
 
@@ -150,11 +153,13 @@ public class BattleSystem : MonoBehaviour
     public void OnFleeButton()
     {
         if (state != BattleState.PLAYERTURN)
-        return;
+            return;
 
         dialogueText.text = "You fled yippe";
         StartCoroutine(FleeBattle());
     }
+
+
 
     IEnumerator FleeBattle()
     {
@@ -164,7 +169,7 @@ public class BattleSystem : MonoBehaviour
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
-            musicManager.RevertToOriginalSong();  
+            musicManager.RevertToOriginalSong();
         }
     }
 
@@ -180,7 +185,7 @@ public class BattleSystem : MonoBehaviour
         }
 
         yield return new WaitForSeconds(3f);
-        
+
         SceneManager.LoadScene("Lobby");
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -192,4 +197,8 @@ public class BattleSystem : MonoBehaviour
 
 
 }
+
+
+
+
 
