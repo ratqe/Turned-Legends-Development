@@ -288,6 +288,9 @@ public class BattleSystem : MonoBehaviour
 
         dialogueText.text = "Player is defending!";
 
+        // Activate defense (reduced damage)
+        playerUnit.isDefending = true;
+
         yield return new WaitForSeconds(1f);  // Hold the defend position for 1 second
 
         // Smoothly move the player back to the original position
@@ -302,9 +305,11 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(0.5f);  // Pause briefly before ending the player's turn
 
         // End the player's turn
+        playerUnit.isDefending = false;  // Turn off defending after player's turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
     }
+
 
 
     IEnumerator FleeBattle()
