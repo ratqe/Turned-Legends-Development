@@ -863,7 +863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09665c94da73246c282b8f3430703dd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coins: 0
+  coins: 100
   CoinsAmount: {fileID: 1043166603}
 --- !u!4 &901724088
 Transform:
@@ -1501,7 +1501,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1927538559}
   m_HandleRect: {fileID: 1927538558}
   m_Direction: 0
-  m_Value: 0
+  m_Value: -0.000030515715
   m_Size: 0.99875146
   m_NumberOfSteps: 0
   m_OnValueChanged:
