@@ -132,5 +132,5 @@ MonoBehaviour:
   unitName: Timtam
   unitLevel: 69
   damage: 10
-  maxHP: 30
-  currentHP: 30
+  getHealth: 30
+  decrementHealth: 30
