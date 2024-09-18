@@ -80,7 +80,7 @@ public class BattleSystem : MonoBehaviour
 
         // Move the player closer to the enemy before attacking
         Vector3 originalPosition = playerBattleStation.position;
-        Vector3 attackPosition = enemyBattleStation.position - new Vector3(1f, 0, 0);  // Move player 1 unit in front of the enemy
+        Vector3 attackPosition = enemyBattleStation.position - new Vector3(0.1f, 0, 0);  // Move player 1 unit in front of the enemy
 
         float elapsedTime = 0f;
         float moveDuration = 0.4f;  // Duration for the movement toward the enemy
@@ -121,7 +121,7 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(1f);  // Pause for a moment to let the enemy stay on the ground
+        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
 
         // Restore enemy to original rotation
         elapsedTime = 0f;
@@ -164,6 +164,22 @@ public class BattleSystem : MonoBehaviour
     {
         int damage = enemyUnit.damage;
 
+        // Move the enemy closer to the player before attacking
+        Vector3 originalPosition = enemyBattleStation.position;
+        Vector3 attackPosition = playerBattleStation.position - new Vector3(0.1f, 0, 0);  // Move enemy 1 unit in front of the player
+
+        float elapsedTime = 0f;
+        float moveDuration = 0.4f;  // Duration for the movement toward the player
+
+        // Smoothly move the enemy toward the player
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(originalPosition, attackPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Trigger attack animation for the enemy
         anim.SetTrigger("Enemy1Attack");
         dialogueText.text = enemyUnit.unitName + " attacks!";
 
@@ -171,38 +187,50 @@ public class BattleSystem : MonoBehaviour
 
         playerDamageText.text = "-" + damage.ToString() + " HP";
 
-        // Make the player take a step back when attacked
-        Vector3 originalPosition = playerBattleStation.position;
-        Vector3 stepBackPosition = originalPosition + new Vector3(-1f, 0, 0);  // Step back 1 unit on the x-axis
+        // Apply fall effect to the player after being hit
+        Quaternion originalPlayerRotation = playerBattleStation.rotation;
+        Quaternion fallRotation = Quaternion.Euler(0f, 0f, -90f);  // Rotate 90 degrees to simulate player falling
 
-        float elapsedTime = 0f;
-        float moveDuration = 0.5f;  // Duration for the step back movement
+        elapsedTime = 0f;
+        float fallDuration = 0.5f;  // Duration for the player to fall
 
-        // Smoothly move the player back
-        while (elapsedTime < moveDuration)
+        // Smoothly rotate the player to simulate falling
+        while (elapsedTime < fallDuration)
         {
-            playerBattleStation.position = Vector3.Lerp(originalPosition, stepBackPosition, (elapsedTime / moveDuration));
+            playerBattleStation.rotation = Quaternion.Slerp(originalPlayerRotation, fallRotation, (elapsedTime / fallDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        bool isDead = playerUnit.TakeDamage(enemyUnit.damage);
+        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the player stay on the ground
 
+        bool isDead = playerUnit.TakeDamage(damage);
         playerHUD.SetHP(playerUnit.decrementHealth);
 
-        yield return new WaitForSeconds(1f);
+        // Restore player to the original rotation after the fall
+        elapsedTime = 0f;
+        while (elapsedTime < fallDuration)
+        {
+            playerBattleStation.rotation = Quaternion.Slerp(fallRotation, originalPlayerRotation, (elapsedTime / fallDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
 
-        // Return the player to the original position
+        // Hide player damage text
+        playerDamageText.text = "";
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Move the enemy back to its original position after attacking
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
         {
-            playerBattleStation.position = Vector3.Lerp(stepBackPosition, originalPosition, (elapsedTime / moveDuration));
+            enemyBattleStation.position = Vector3.Lerp(attackPosition, originalPosition, (elapsedTime / moveDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        playerDamageText.text = "";
-
+        // Check if the player is dead
         if (isDead)
         {
             state = BattleState.LOST;
@@ -214,6 +242,7 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+
 
 
     public void OnAttackButton()
