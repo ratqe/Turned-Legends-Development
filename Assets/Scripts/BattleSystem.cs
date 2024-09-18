@@ -185,7 +185,7 @@ public class BattleSystem : MonoBehaviour
         // Trigger attack animation for the enemy
         anim.SetTrigger("Enemy1Attack");
 
-        dialogueText.text = enemyUnit.unitName + " attacks!";
+        
 
         // Let the attack animation play
         yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
