@@ -108,8 +108,61 @@ public class BattleSystem : MonoBehaviour
 
 
     }
+    IEnumerator EnemyTurn()
+    {
+        int damage = enemyUnit.damage;
 
- 
+        anim.SetTrigger("Enemy1Attack");
+        dialogueText.text = enemyUnit.unitName + " attacks!";
+
+        yield return new WaitForSeconds(1f);
+
+        playerDamageText.text = "-" + damage.ToString() + " HP";
+
+        // Make the player take a step back when attacked
+        Vector3 originalPosition = playerBattleStation.position;
+        Vector3 stepBackPosition = originalPosition + new Vector3(-1f, 0, 0);  // Step back 1 unit on the x-axis
+
+        float elapsedTime = 0f;
+        float moveDuration = 0.5f;  // Duration for the step back movement
+
+        // Smoothly move the player back
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(originalPosition, stepBackPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        bool isDead = playerUnit.TakeDamage(enemyUnit.damage);
+
+        playerHUD.SetHP(playerUnit.decrementHealth);
+
+        yield return new WaitForSeconds(1f);
+
+        // Return the player to the original position
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(stepBackPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        playerDamageText.text = "";
+
+        if (isDead)
+        {
+            state = BattleState.LOST;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            state = BattleState.PLAYERTURN;
+            PlayerTurn();
+        }
+    }
+
 
     public void OnAttackButton()
     {
