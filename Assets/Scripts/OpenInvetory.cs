@@ -20,7 +20,7 @@ public class OpenInvetory : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.E))
         {
-            if(isPaused)
+            if(isOpen)
             {
                 ResumeGame();
             }
