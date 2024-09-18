@@ -7,7 +7,7 @@ public class OpenInvetory : MonoBehaviour
 {
     public GameObject InventoryMenu;
 
-    public bool isPaused;
+    public bool isOpen;
 
     // Start is called before the first frame update
     void Start()
@@ -18,12 +18,16 @@ public class OpenInvetory : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Checks if the user presses the 'E' key
         if(Input.GetKeyDown(KeyCode.E))
         {
-            if(isPaused)
+            // If the inventory is already open it will close the menu and resume the game
+            if(isOpen)
             {
                 ResumeGame();
             }
+            
+            // Otherwise pause the game and open the inventory
             else
             {
                 PauseGame();
@@ -31,17 +35,27 @@ public class OpenInvetory : MonoBehaviour
         }
     }
 
+    // Function to pause the game and open the inventory
     public void PauseGame()
     {
-        InventoryMenu.SetActive(true); // Activate the menu
-        Time.timeScale = 0f; 
-        isPaused = true;
+        // Activate the inventory menu UI
+        InventoryMenu.SetActive(true);
+
+        // Stop the in-game Clock
+        Time.timeScale = 0f;
+
+        isOpen = true;
     }
 
+    // Function to resume the game and close the inventory
     public void ResumeGame()
     {
-        InventoryMenu.SetActive(false); // Deactivate the menu
-        Time.timeScale = 1f; // Resume the in-game clock
-        isPaused = false;
+        // Deactivate the inventory menu UI
+        InventoryMenu.SetActive(false);
+
+        // Resume the in-game clock
+        Time.timeScale = 1f;
+
+        isOpen = false;
     }
 }
