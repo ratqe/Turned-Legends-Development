@@ -7,7 +7,7 @@ public class OpenInvetory : MonoBehaviour
 {
     public GameObject InventoryMenu;
 
-    public bool isPaused;
+    public bool isOpen;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +20,7 @@ public class OpenInvetory : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.E))
         {
-            if(isPaused)
+            if(isOpen)
             {
                 ResumeGame();
             }
@@ -33,15 +33,23 @@ public class OpenInvetory : MonoBehaviour
 
     public void PauseGame()
     {
-        InventoryMenu.SetActive(true); // Activate the menu
-        Time.timeScale = 0f; 
-        isPaused = true;
+        // Activate the menu
+        InventoryMenu.SetActive(true);
+
+        // Stop the in-game Clock
+        Time.timeScale = 0f;
+
+        isOpen = true;
     }
 
     public void ResumeGame()
     {
-        InventoryMenu.SetActive(false); // Deactivate the menu
-        Time.timeScale = 1f; // Resume the in-game clock
-        isPaused = false;
+        // Deactivate the menu
+        InventoryMenu.SetActive(false);
+
+        // Resume the in-game clock
+        Time.timeScale = 1f;
+
+        isOpen = false;
     }
 }
