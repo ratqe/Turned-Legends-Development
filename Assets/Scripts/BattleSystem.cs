@@ -80,10 +80,10 @@ public class BattleSystem : MonoBehaviour
 
         // Move the player closer to the enemy before attacking
         Vector3 originalPosition = playerBattleStation.position;
-        Vector3 attackPosition = enemyBattleStation.position - new Vector3(0.1f, 0, 0);  // Move player 1 unit in front of the enemy
+        Vector3 attackPosition = enemyBattleStation.position - new Vector3(3f, 0, 0);  // Move player 1 unit in front of the enemy
 
         float elapsedTime = 0f;
-        float moveDuration = 0.4f;  // Duration for the movement toward the enemy
+        float moveDuration = 1f;  // Duration for the movement toward the enemy
 
         // Smoothly move the player toward the enemy
         while (elapsedTime < moveDuration)
@@ -162,14 +162,17 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
-        int damage = enemyUnit.damage;
+        float damage = enemyUnit.damage;  // Enemy's base damage
 
         // Move the enemy closer to the player before attacking
         Vector3 originalPosition = enemyBattleStation.position;
-        Vector3 attackPosition = playerBattleStation.position - new Vector3(0.1f, 0, 0);  // Move enemy 1 unit in front of the player
+
+        // Position the enemy directly in front of the player
+        // Reduce the distance to a smaller value to position the enemy very close to the player
+        Vector3 attackPosition = playerBattleStation.position + new Vector3(4f, 0, 0);  // Adjust the X value as needed
 
         float elapsedTime = 0f;
-        float moveDuration = 0.4f;  // Duration for the movement toward the player
+        float moveDuration = 0.9f;  // Duration for the movement toward the player
 
         // Smoothly move the enemy toward the player
         while (elapsedTime < moveDuration)
@@ -181,47 +184,17 @@ public class BattleSystem : MonoBehaviour
 
         // Trigger attack animation for the enemy
         anim.SetTrigger("Enemy1Attack");
+
         dialogueText.text = enemyUnit.unitName + " attacks!";
 
-        yield return new WaitForSeconds(1f);
+        // Let the attack animation play
+        yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
 
-        playerDamageText.text = "-" + damage.ToString() + " HP";
+        // Apply damage to the player
+        bool isDead = playerUnit.TakeDamage((int)damage);
+        playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
 
-        // Apply fall effect to the player after being hit
-        Quaternion originalPlayerRotation = playerBattleStation.rotation;
-        Quaternion fallRotation = Quaternion.Euler(0f, 0f, -90f);  // Rotate 90 degrees to simulate player falling
-
-        elapsedTime = 0f;
-        float fallDuration = 0.5f;  // Duration for the player to fall
-
-        // Smoothly rotate the player to simulate falling
-        while (elapsedTime < fallDuration)
-        {
-            playerBattleStation.rotation = Quaternion.Slerp(originalPlayerRotation, fallRotation, (elapsedTime / fallDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the player stay on the ground
-
-        bool isDead = playerUnit.TakeDamage(damage);
-        playerHUD.SetHP(playerUnit.decrementHealth);
-
-        // Restore player to the original rotation after the fall
-        elapsedTime = 0f;
-        while (elapsedTime < fallDuration)
-        {
-            playerBattleStation.rotation = Quaternion.Slerp(fallRotation, originalPlayerRotation, (elapsedTime / fallDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // Hide player damage text
-        playerDamageText.text = "";
-
-        yield return new WaitForSeconds(0.5f);
-
-        // Move the enemy back to its original position after attacking
+        // Move the enemy back to its original position after the attack
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
         {
@@ -242,6 +215,9 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+
+
+
 
 
 
@@ -271,14 +247,14 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerDefend()
     {
-        // Move the player upwards before defending
+        // Move the player backward when defending
         Vector3 originalPosition = playerBattleStation.position;
-        Vector3 defendPosition = originalPosition + new Vector3(0, 1f, 0);  // Move player 1 unit upwards
+        Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move player 1 unit backward
 
         float elapsedTime = 0f;
         float moveDuration = 0.4f;  // Duration for the movement
 
-        // Smoothly move the player upwards
+        // Smoothly move the player backward
         while (elapsedTime < moveDuration)
         {
             playerBattleStation.position = Vector3.Lerp(originalPosition, defendPosition, (elapsedTime / moveDuration));
@@ -291,9 +267,14 @@ public class BattleSystem : MonoBehaviour
         // Activate defense (reduced damage)
         playerUnit.isDefending = true;
 
-        yield return new WaitForSeconds(1f);  // Hold the defend position for 1 second
+        // Hold the defend position until the enemy turn is over
+        yield return new WaitForSeconds(4f);  // Optional pause before enemy turn
 
-        // Smoothly move the player back to the original position
+        // End the player's turn and switch to enemy turn
+        state = BattleState.ENEMYTURN;
+        StartCoroutine(EnemyTurn());
+
+        // After the enemy's attack, return the player to the original position
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
         {
@@ -302,13 +283,11 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(0.5f);  // Pause briefly before ending the player's turn
-
-        // End the player's turn
-        playerUnit.isDefending = false;  // Turn off defending after player's turn
-        state = BattleState.ENEMYTURN;
-        StartCoroutine(EnemyTurn());
+        // Turn off defending after the enemy's attack
+        playerUnit.isDefending = false;
     }
+
+
 
 
 
