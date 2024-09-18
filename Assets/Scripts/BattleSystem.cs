@@ -78,12 +78,28 @@ public class BattleSystem : MonoBehaviour
     {
         int damage = playerUnit.damage;  // player damage
 
-        // triggering animation
+        // Move the player closer to the enemy before attacking
+        Vector3 originalPosition = playerBattleStation.position;
+        Vector3 attackPosition = enemyBattleStation.position - new Vector3(1f, 0, 0);  // Move player 1 unit in front of the enemy
+
+        float elapsedTime = 0f;
+        float moveDuration = 0.4f;  // Duration for the movement toward the enemy
+
+        // Smoothly move the player toward the enemy
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(originalPosition, attackPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Triggering animation
         playerAnim.SetTrigger("Player1Attack");
-        // letting the animation play first then dmg applied
+
+        // Let the animation play first, then apply damage
         yield return new WaitForSeconds(1f);
 
-        //dmg dealt by the player
+        // Damage dealt by the player
         enemyDamageText.text = "-" + damage.ToString() + " HP";
 
         bool isDead = enemyUnit.TakeDamage(playerUnit.damage);
@@ -92,9 +108,19 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        // will hide dmg after
+        // Hide damage after a short delay
         enemyDamageText.text = "";
 
+        // Move the player back to the original position
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(attackPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Check if the enemy is dead
         if (isDead)
         {
             state = BattleState.WON;
@@ -105,9 +131,8 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
-
-
     }
+
     IEnumerator EnemyTurn()
     {
         int damage = enemyUnit.damage;
