@@ -88,7 +88,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return corridors;
     }
 
-    private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2Int destination)
+    private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2Int destination, int corridorWidth = 2)
     {
         HashSet<Vector2Int> corridor = new HashSet<Vector2Int>();
         var position = currentRoomCenter;
@@ -103,6 +103,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             else if (destination.y < position.y)
                 position += Vector2Int.down;
             corridor.Add(position);
+            AddCorridorWidth(corridor, position, corridorWidth, isVertical: true);
         }
 
         steps = 0;
@@ -114,8 +115,28 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             else if (destination.x < position.x)
                 position += Vector2Int.left;
             corridor.Add(position);
+            AddCorridorWidth(corridor, position, corridorWidth, isVertical: false);
         }
         return corridor;
+    }
+
+    private void AddCorridorWidth(HashSet<Vector2Int> corridor, Vector2Int position, int width, bool isVertical)
+    {
+        for (int i = 1; i < width; i++)
+        {
+            if (isVertical)
+            {
+                // Extend corridor horizontally for vertical movement
+                corridor.Add(position + Vector2Int.right * i);
+                corridor.Add(position + Vector2Int.left * i);
+            }
+            else
+            {
+                // Extend corridor vertically for horizontal movement
+                corridor.Add(position + Vector2Int.up * i);
+                corridor.Add(position + Vector2Int.down * i);
+            }
+        }
     }
 
     private Vector2Int FindClosestPointTo(Vector2Int currentRoomCenter, List<Vector2Int> roomCenters)
