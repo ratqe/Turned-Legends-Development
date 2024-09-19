@@ -124,6 +124,46 @@ public class BattleSystem : MonoBehaviour
         enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "The attack is successful!";
 
+        // Apply fall effect to enemy
+        Quaternion originalRotation = enemyBattleStation.rotation;
+        Quaternion fallRotation = Quaternion.Euler(0f, 0f, 90f);  // Rotate 90 degrees to simulate fall
+
+        elapsedTime = 0f;
+        float fallDuration = 0.5f;  // Duration for the enemy to fall
+
+        // Smoothly rotate the enemy to simulate falling
+        while (elapsedTime < fallDuration)
+        {
+            enemyBattleStation.rotation = Quaternion.Slerp(originalRotation, fallRotation, (elapsedTime / fallDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
+        // Rest of the attack sequence...
+
+        // Restore enemy to original rotation
+        elapsedTime = 0f;
+        while (elapsedTime < fallDuration)
+        {
+            enemyBattleStation.rotation = Quaternion.Slerp(fallRotation, originalRotation, (elapsedTime / fallDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Move the player back to the original position
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(attackPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(2f);
+
+        // Hide damage after a short delay
+        enemyDamageText.text = "";
+
         // Rest of the attack sequence...
 
         if (isDead)
