@@ -13,17 +13,17 @@ public class EnemyTrigger : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             SceneManager.LoadScene(battleScene);
-            DestroyPlayerOnSceneLoad();
+            //DestroyPlayerOnSceneLoad();
         }
     }
 
-    void DestroyPlayerOnSceneLoad()
+    /*void DestroyPlayerOnSceneLoad()
     {
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
             Destroy(player);
         }
-    }
+    }*/
 
 }
