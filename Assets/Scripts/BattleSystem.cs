@@ -299,6 +299,34 @@ public class BattleSystem : MonoBehaviour
         enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "A devastating blow!";
 
+        // Trigger fall animation or effect for the enemy
+        Quaternion originalRotation = enemyBattleStation.rotation;
+        Quaternion fallRotation = Quaternion.Euler(0f, 0f, 90f);  // Rotate 90 degrees to simulate fall
+
+        float fallDuration = 0.5f;
+        float elapsedTimeFall = 0f;
+
+        // Smoothly rotate the enemy to simulate falling
+        while (elapsedTimeFall < fallDuration)
+        {
+            enemyBattleStation.rotation = Quaternion.Slerp(originalRotation, fallRotation, (elapsedTimeFall / fallDuration));
+            elapsedTimeFall += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
+
+        // Rest of the special attack sequence...
+
+        // Restore enemy to original rotation (optional, if you want to make the enemy stand up again)
+        elapsedTimeFall = 0f;
+        while (elapsedTimeFall < fallDuration)
+        {
+            enemyBattleStation.rotation = Quaternion.Slerp(fallRotation, originalRotation, (elapsedTimeFall / fallDuration));
+            elapsedTimeFall += Time.deltaTime;
+            yield return null;
+        }
+
         yield return new WaitForSeconds(2f);
 
         // Hide damage after a short delay
@@ -315,6 +343,7 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(EnemyTurn());
         }
     }
+
 
 
 
