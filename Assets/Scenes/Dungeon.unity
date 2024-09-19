@@ -20362,10 +20362,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemSlot
       objectReference: {fileID: 0}
-    - target: {fileID: 8580922280752655641, guid: 92ddec50856db4da2a22955b5da53ad0, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -1.9429932
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
