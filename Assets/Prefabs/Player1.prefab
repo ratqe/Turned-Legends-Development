@@ -51,6 +51,7 @@ MonoBehaviour:
   damage: 10
   getHealth: 30
   decrementHealth: 30
+  isDefending: 0
 --- !u!212 &5626499423768275182
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_Sprite: {fileID: 4723107735738678597, guid: 0bd97e23f8b532a4f8969605a3b00a4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

@@ -21,6 +21,7 @@ public class PlayerControl : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        
     }
 
     // Start is called before the first frame update

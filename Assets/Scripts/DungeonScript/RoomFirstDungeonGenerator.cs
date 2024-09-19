@@ -16,6 +16,8 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [SerializeField]
     private bool randomWalkRooms = false; // responsible to check if random walk room want to be use or square room
 
+    public Vector2Int spawnPosition; // Store spawn 
+
     protected override void RunProceduralGeneration()
     {
         CreateRooms();
@@ -49,6 +51,22 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         tilemapVisualizer.PaintFloorTile(floor);
         WallGenerator.CreateWalls(floor, tilemapVisualizer);
+
+        // Find a suitable spawn point within the generated dungeon
+        spawnPosition = FindValidSpawnPoint(floor);
+    }
+
+    private Vector2Int FindValidSpawnPoint(HashSet<Vector2Int> floorPositions)
+    {
+        // Example logic to find a random valid spawn point from floor positions
+        // Ensure the spawn position is within the dungeon and not on a wall
+        if (floorPositions.Count > 0)
+        {
+            // Convert floor positions to a list and pick a random position
+            List<Vector2Int> floorList = new List<Vector2Int>(floorPositions);
+            return floorList[Random.Range(0, floorList.Count)];
+        }
+        return Vector2Int.zero; // Default to (0,0) if no valid position
     }
 
     private HashSet<Vector2Int> CreateRandomRooms(List<BoundsInt> roomsList)
@@ -88,7 +106,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return corridors;
     }
 
-    private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2Int destination)
+    private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2Int destination, int corridorWidth = 2)
     {
         HashSet<Vector2Int> corridor = new HashSet<Vector2Int>();
         var position = currentRoomCenter;
@@ -103,6 +121,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             else if (destination.y < position.y)
                 position += Vector2Int.down;
             corridor.Add(position);
+            AddCorridorWidth(corridor, position, corridorWidth, isVertical: true);
         }
 
         steps = 0;
@@ -114,8 +133,28 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
             else if (destination.x < position.x)
                 position += Vector2Int.left;
             corridor.Add(position);
+            AddCorridorWidth(corridor, position, corridorWidth, isVertical: false);
         }
         return corridor;
+    }
+
+    private void AddCorridorWidth(HashSet<Vector2Int> corridor, Vector2Int position, int width, bool isVertical)
+    {
+        for (int i = 1; i < width; i++)
+        {
+            if (isVertical)
+            {
+                // Extend corridor horizontally for vertical movement
+                corridor.Add(position + Vector2Int.right * i);
+                corridor.Add(position + Vector2Int.left * i);
+            }
+            else
+            {
+                // Extend corridor vertically for horizontal movement
+                corridor.Add(position + Vector2Int.up * i);
+                corridor.Add(position + Vector2Int.down * i);
+            }
+        }
     }
 
     private Vector2Int FindClosestPointTo(Vector2Int currentRoomCenter, List<Vector2Int> roomCenters)
