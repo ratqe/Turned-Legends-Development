@@ -12,6 +12,12 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [Range(0.1f,1)]
     private float roomPercent = 0.8f;
 
+    // Automatically generate the dungeon when the scene loads
+    private void Start()
+    {
+        GenerateDungeon();
+    }
+
     protected override void RunProceduralGeneration()
     {
         CorridorFirstGeneration();
