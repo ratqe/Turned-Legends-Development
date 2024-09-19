@@ -32,17 +32,20 @@ public class BattleSystem : MonoBehaviour
     public Text playerDamageText;
     public Text enemyDamageText;
     private bool hasAttacked = false;  // Flag to track if the player has attacked 
+    private int attackCount = 0;  // Counter to track the number of attacks
+
 
     [SerializeField]
     private string battleScene = "Battle 1";
 
     // Array of random gameplay tips
     private string[] tips = {
-        "Remember to heal when you're low on health!",
-        "Defending reduces incoming damage significantly.",
-        "Use strong attacks to finish off weakened enemies.",
-        "Switch up your tactics to outsmart your enemies!",
-        "Pay attention to enemy attack patterns!"
+        
+        "Tips: Remember to heal when you're low on health!",
+        "Tips: Defending reduces incoming damage significantly.",
+        "Tips: Use strong attacks to finish off weakened enemies.",
+        "Tips: Switch up your tactics to outsmart your enemies!",
+        "Tips: Pay attention to enemy attack patterns!"
     };
 
     void Start()
@@ -238,6 +241,81 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+    IEnumerator PlayerSpecialAttack()
+    {
+        DisplayRandomTip();  // Show a random tip when the special attack starts
+
+        int damage = playerUnit.damage * 3;  // Stronger final blow
+
+        Vector3 originalPosition = playerBattleStation.position;
+
+        // Define waypoints for the player to move around before attacking
+        Vector3[] waypoints = new Vector3[]
+        {
+        playerBattleStation.position + new Vector3(3f, 0, 0),  // Right
+        playerBattleStation.position + new Vector3(3f, 2f, 0),  // Up
+        playerBattleStation.position + new Vector3(-3f, 2f, 0),  // Left
+        playerBattleStation.position + new Vector3(-3f, 0, 0)   // Down
+        };
+
+        float moveDuration = 0.5f;
+
+        // Move the player around the waypoints
+        foreach (Vector3 waypoint in waypoints)
+        {
+            float elapsedTime = 0f;
+
+            while (elapsedTime < moveDuration)
+            {
+                playerBattleStation.position = Vector3.Lerp(originalPosition, waypoint, (elapsedTime / moveDuration));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            originalPosition = waypoint;
+        }
+
+        // Move the player toward the enemy for the final blow
+        Vector3 attackPosition = enemyBattleStation.position - new Vector3(3f, 0, 0);
+
+        float attackMoveDuration = 1f;
+        float elapsedAttackTime = 0f;
+
+        while (elapsedAttackTime < attackMoveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(originalPosition, attackPosition, (elapsedAttackTime / attackMoveDuration));
+            elapsedAttackTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Trigger attack animation for the player
+        playerAnim.SetTrigger("Player1Attack");
+
+        yield return new WaitForSeconds(1f);
+
+        // Deal the final blow to the enemy
+        enemyDamageText.text = "-" + damage.ToString() + " HP";
+        bool isDead = enemyUnit.TakeDamage(damage);
+        enemyHUD.SetHP(enemyUnit.decrementHealth);
+        dialogueText.text = "A devastating blow!";
+
+        yield return new WaitForSeconds(2f);
+
+        // Hide damage after a short delay
+        enemyDamageText.text = "";
+
+        if (isDead)
+        {
+            state = BattleState.WON;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            state = BattleState.ENEMYTURN;
+            StartCoroutine(EnemyTurn());
+        }
+    }
+
 
 
 
@@ -246,9 +324,21 @@ public class BattleSystem : MonoBehaviour
         if (state != BattleState.PLAYERTURN)
             return;
 
-        hasAttacked = true;  // Set this flag when the player attacks
-        StartCoroutine(PlayerAttack());
+        attackCount++;  // Increment the attack counter
+
+        if (attackCount >= 3)
+        {
+            // Trigger the special move after 3 attacks
+            StartCoroutine(PlayerSpecialAttack());
+            attackCount = 0;  // Reset the counter after the special attack
+        }
+        else
+        {
+            hasAttacked = true;  // Set this flag when the player attacks
+            StartCoroutine(PlayerAttack());
+        }
     }
+
 
     public void OnFleeButton()
     {
