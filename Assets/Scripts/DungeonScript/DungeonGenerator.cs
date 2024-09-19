@@ -3,14 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
+public class DungeonGenerator : SimpleRandomWalkDungeonGenerator
 {
     [SerializeField]
     private int corridorLength = 14, corridorCount = 5;
     [SerializeField]
     [Range(0.1f,1)]
     private float roomPercent = 0.8f;
+
+    [SerializeField]
+    private GameObject enemyPrefab; // Reference to enemy prefab
+
+    [SerializeField]
+    private int enemiesPerRoom = 2; // Number of enemies per room
 
     // Automatically generate the dungeon when the scene loads
     private void Start()
@@ -20,23 +27,23 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     protected override void RunProceduralGeneration()
     {
-        CorridorFirstGeneration();
+        DungeonGeneration();
     }
 
-    private void CorridorFirstGeneration()
+    private void DungeonGeneration()
     {
         HashSet<Vector2Int> floorPosition = new HashSet<Vector2Int>();
         HashSet<Vector2Int> potentialRoomPositions = new HashSet<Vector2Int>();
 
         List<List<Vector2Int>> corridors = CreateCorridors(floorPosition, potentialRoomPositions);
 
-        HashSet<Vector2Int> roomPostions = CreateRooms(potentialRoomPositions);
+        HashSet<Vector2Int> roomPositions = CreateRooms(potentialRoomPositions);
 
         List<Vector2Int> deadEnds = FindAllDeadEnds(floorPosition);
 
-        CreateRoomsAtDeadEnd(deadEnds, roomPostions); // add deadend
+        CreateRoomsAtDeadEnd(deadEnds, roomPositions); // add deadend
 
-        floorPosition.UnionWith(roomPostions);
+        floorPosition.UnionWith(roomPositions);
 
         for (int i = 0; i < corridors.Count; i++)
         {
@@ -47,7 +54,28 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         tilemapVisualizer.PaintFloorTile(floorPosition); // creates floor
         WallGenerator.CreateWalls(floorPosition, tilemapVisualizer); // Creates wall
+
+        // Spawn enemies after the dungeon generation
+        spawnEnemies(roomPositions);
     }
+
+    private void spawnEnemies(HashSet<Vector2Int> roomPositions)
+    {
+        List<Vector2Int> roomPositionList = roomPositions.ToList();  // Convert HashSet to List for random access
+
+        for (int i = 0; i < enemiesPerRoom; i++)
+        {
+            // Pick a random position from room tiles
+            Vector2Int randomRoomPosition = roomPositionList[Random.Range(0, roomPositionList.Count)];
+
+            // Convert to Vector3 for positioning in the world
+            Vector3 spawnPosition = new Vector3(randomRoomPosition.x, randomRoomPosition.y, 0);
+
+            // Instantiate the enemy prefab at the chosen position
+            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        }
+    }
+
 
     // Make corridors path 3x3
     private List<Vector2Int> IncreaseCorridorBrush3By3(List<Vector2Int> corridor)
