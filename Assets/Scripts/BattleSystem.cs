@@ -35,6 +35,9 @@ public class BattleSystem : MonoBehaviour
     public Text enemyDamageText;
     private bool hasAttacked = false;  // Flag to track if the player has attacked 
 
+    [SerializeField]
+    private string battleScene = "Battle 1";
+
     void Start()
     {
         state = BattleState.START;
@@ -326,7 +329,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load the Lobby scene
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene(battleScene);
 
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -349,7 +352,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene(battleScene);
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
