@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4021111439873543613}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.024, y: 0.293, z: 0}
+  m_LocalPosition: {x: -1, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51,6 +51,7 @@ MonoBehaviour:
   damage: 10
   getHealth: 30
   decrementHealth: 30
+  isDefending: 0
 --- !u!212 &5626499423768275182
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_Sprite: {fileID: 4723107735738678597, guid: 0bd97e23f8b532a4f8969605a3b00a4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

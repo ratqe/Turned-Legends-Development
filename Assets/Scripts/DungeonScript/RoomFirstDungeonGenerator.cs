@@ -16,6 +16,14 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [SerializeField]
     private bool randomWalkRooms = false; // responsible to check if random walk room want to be use or square room
 
+    public Vector2Int spawnPosition; // Store spawn position
+
+    // Automatically generate the dungeon when the scene loads
+    private void Start()
+    {
+        GenerateDungeon();
+    }
+
     protected override void RunProceduralGeneration()
     {
         CreateRooms();
@@ -49,6 +57,22 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         tilemapVisualizer.PaintFloorTile(floor);
         WallGenerator.CreateWalls(floor, tilemapVisualizer);
+
+        // Find a suitable spawn point within the generated dungeon
+        spawnPosition = FindValidSpawnPoint(floor);
+    }
+
+    private Vector2Int FindValidSpawnPoint(HashSet<Vector2Int> floorPositions)
+    {
+        // Example logic to find a random valid spawn point from floor positions
+        // Ensure the spawn position is within the dungeon and not on a wall
+        if (floorPositions.Count > 0)
+        {
+            // Convert floor positions to a list and pick a random position
+            List<Vector2Int> floorList = new List<Vector2Int>(floorPositions);
+            return floorList[Random.Range(0, floorList.Count)];
+        }
+        return Vector2Int.zero; // Default to (0,0) if no valid position
     }
 
     private HashSet<Vector2Int> CreateRandomRooms(List<BoundsInt> roomsList)
