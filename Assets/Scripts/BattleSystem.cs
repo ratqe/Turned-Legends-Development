@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
+using TMPro; // Import TextMeshPro for UI
 
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
@@ -12,9 +12,6 @@ public class BattleSystem : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject enemyPrefab;
 
-
-
-
     public Transform playerBattleStation;
     public Transform enemyBattleStation;
 
@@ -22,6 +19,7 @@ public class BattleSystem : MonoBehaviour
     Unit enemyUnit;
 
     public Text dialogueText;
+    public TextMeshProUGUI tipText;  // UI Text element for random tips using TextMeshPro
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
 
@@ -33,8 +31,22 @@ public class BattleSystem : MonoBehaviour
     private Animator playerAnim;
     public Text playerDamageText;
     public Text enemyDamageText;
+    private bool hasAttacked = false;  // Flag to track if the player has attacked 
+    private int attackCount = 0;  // Counter to track the number of attacks
 
-     private bool hasAttacked = false;
+
+    [SerializeField]
+    private string battleScene = "Battle 1";
+
+    // Array of random gameplay tips
+    private string[] tips = {
+        
+        "Tips: Remember to heal when you're low on health!",
+        "Tips: Defending reduces incoming damage significantly.",
+        "Tips: Use strong attacks to finish off weakened enemies.",
+        "Tips: Switch up your tactics to outsmart your enemies!",
+        "Tips: Pay attention to enemy attack patterns!"
+    };
 
     void Start()
     {
@@ -45,6 +57,7 @@ public class BattleSystem : MonoBehaviour
         {
             musicManager.ChangeSong(newSong);  // Play the new song in this specific scene
         }
+        hasAttacked = false;  // Reset the flag at the start of the battle
     }
 
     IEnumerator SetupBattle()
@@ -64,11 +77,8 @@ public class BattleSystem : MonoBehaviour
         enemyHUD.SetHUD(enemyUnit);
         yield return new WaitForSeconds(2f);
 
-
         state = BattleState.PLAYERTURN;
         PlayerTurn();
-
-
     }
 
     void PlayerTurn()
@@ -76,9 +86,16 @@ public class BattleSystem : MonoBehaviour
         dialogueText.text = "Choose action:";
     }
 
+    // Method to display a random tip on the screen
+    void DisplayRandomTip()
+    {
+        int randomIndex = Random.Range(0, tips.Length);  // Pick a random tip index
+        tipText.text = tips[randomIndex];  // Display the selected tip in the UI
+    }
+
     IEnumerator PlayerAttack()
     {
-        hasAttacked = true;
+        DisplayRandomTip();  // Show a random tip when attacking
 
         int damage = playerUnit.damage;  // player damage
 
@@ -126,6 +143,7 @@ public class BattleSystem : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
+        // Rest of the attack sequence...
 
         // Restore enemy to original rotation
         elapsedTime = 0f;
@@ -135,6 +153,7 @@ public class BattleSystem : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         // Move the player back to the original position
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
@@ -148,9 +167,8 @@ public class BattleSystem : MonoBehaviour
         // Hide damage after a short delay
         enemyDamageText.text = "";
 
+        // Rest of the attack sequence...
 
-
-        // Check if the enemy is dead
         if (isDead)
         {
             state = BattleState.WON;
@@ -162,7 +180,6 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(EnemyTurn());
         }
     }
-
 
     IEnumerator EnemyTurn()
     {
@@ -189,10 +206,10 @@ public class BattleSystem : MonoBehaviour
 
         // Trigger attack animation for the enemy
         anim.SetTrigger("Enemy1Attack");
-        
+
 
         // Let the attack animation play
-       
+
         yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
         playerDamageText.text = "-" + damage.ToString() + " HP";
 
@@ -224,7 +241,108 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+    IEnumerator PlayerSpecialAttack()
+    {
+        DisplayRandomTip();  // Show a random tip when the special attack starts
 
+        int damage = playerUnit.damage * 3;  // Stronger final blow
+
+        Vector3 originalPosition = playerBattleStation.position;
+
+        // Define waypoints for the player to move around before attacking
+        Vector3[] waypoints = new Vector3[]
+        {
+        playerBattleStation.position + new Vector3(3f, 0, 0),  // Right
+        playerBattleStation.position + new Vector3(3f, 2f, 0),  // Up
+        playerBattleStation.position + new Vector3(-3f, 2f, 0),  // Left
+        playerBattleStation.position + new Vector3(-3f, 0, 0)   // Down
+        };
+
+        float moveDuration = 0.5f;
+
+        // Move the player around the waypoints
+        foreach (Vector3 waypoint in waypoints)
+        {
+            float elapsedTime = 0f;
+
+            while (elapsedTime < moveDuration)
+            {
+                playerBattleStation.position = Vector3.Lerp(originalPosition, waypoint, (elapsedTime / moveDuration));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            originalPosition = waypoint;
+        }
+
+        // Move the player toward the enemy for the final blow
+        Vector3 attackPosition = enemyBattleStation.position - new Vector3(3f, 0, 0);
+
+        float attackMoveDuration = 1f;
+        float elapsedAttackTime = 0f;
+
+        while (elapsedAttackTime < attackMoveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(originalPosition, attackPosition, (elapsedAttackTime / attackMoveDuration));
+            elapsedAttackTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Trigger attack animation for the player
+        playerAnim.SetTrigger("Player1Attack");
+
+        yield return new WaitForSeconds(1f);
+
+        // Deal the final blow to the enemy
+        enemyDamageText.text = "-" + damage.ToString() + " HP";
+        bool isDead = enemyUnit.TakeDamage(damage);
+        enemyHUD.SetHP(enemyUnit.decrementHealth);
+        dialogueText.text = "A devastating blow!";
+
+        // Trigger fall animation or effect for the enemy
+        Quaternion originalRotation = enemyBattleStation.rotation;
+        Quaternion fallRotation = Quaternion.Euler(0f, 0f, 90f);  // Rotate 90 degrees to simulate fall
+
+        float fallDuration = 0.5f;
+        float elapsedTimeFall = 0f;
+
+        // Smoothly rotate the enemy to simulate falling
+        while (elapsedTimeFall < fallDuration)
+        {
+            enemyBattleStation.rotation = Quaternion.Slerp(originalRotation, fallRotation, (elapsedTimeFall / fallDuration));
+            elapsedTimeFall += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
+
+        // Rest of the special attack sequence...
+
+        // Restore enemy to original rotation (optional, if you want to make the enemy stand up again)
+        elapsedTimeFall = 0f;
+        while (elapsedTimeFall < fallDuration)
+        {
+            enemyBattleStation.rotation = Quaternion.Slerp(fallRotation, originalRotation, (elapsedTimeFall / fallDuration));
+            elapsedTimeFall += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        // Hide damage after a short delay
+        enemyDamageText.text = "";
+
+        if (isDead)
+        {
+            state = BattleState.WON;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            state = BattleState.ENEMYTURN;
+            StartCoroutine(EnemyTurn());
+        }
+    }
 
 
 
@@ -235,8 +353,21 @@ public class BattleSystem : MonoBehaviour
         if (state != BattleState.PLAYERTURN)
             return;
 
-        StartCoroutine(PlayerAttack());
+        attackCount++;  // Increment the attack counter
+
+        if (attackCount >= 3)
+        {
+            // Trigger the special move after 3 attacks
+            StartCoroutine(PlayerSpecialAttack());
+            attackCount = 0;  // Reset the counter after the special attack
+        }
+        else
+        {
+            hasAttacked = true;  // Set this flag when the player attacks
+            StartCoroutine(PlayerAttack());
+        }
     }
+
 
     public void OnFleeButton()
     {
@@ -245,11 +376,11 @@ public class BattleSystem : MonoBehaviour
 
         if (hasAttacked)
         {
-            dialogueText.text = "You cannot flee after attacking!";
-            return;  // Prevent fleeing if player has attacked
+            dialogueText.text = "Can't flee after attacking";
+            return;  // Prevent the player from fleeing if they've attacked
         }
 
-        dialogueText.text = "You fled yippe";
+        dialogueText.text = "You fled yippe!";
         StartCoroutine(FleeBattle());
     }
     public void OnDefendButton()
@@ -258,6 +389,7 @@ public class BattleSystem : MonoBehaviour
             return;
 
         StartCoroutine(PlayerDefend());
+        DisplayRandomTip();  // Show a random tip when defending
     }
 
     IEnumerator PlayerDefend()
@@ -305,6 +437,8 @@ public class BattleSystem : MonoBehaviour
 
 
 
+
+
     IEnumerator FleeBattle()
     {
         // Define how far the player will dash backwards and how long it will take
@@ -326,7 +460,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load the Lobby scene
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene(battleScene);
 
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -349,19 +483,13 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene(battleScene);
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
             musicManager.RevertToOriginalSong();
         }
-
     }
 
 
 }
-
-
-
-
-
