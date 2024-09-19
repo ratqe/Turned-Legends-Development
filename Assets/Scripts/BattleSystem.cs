@@ -33,6 +33,10 @@ public class BattleSystem : MonoBehaviour
     private Animator playerAnim;
     public Text playerDamageText;
     public Text enemyDamageText;
+    private bool hasAttacked = false;  // Flag to track if the player has attacked 
+
+    [SerializeField]
+    private string battleScene = "Battle 1";
 
     void Start()
     {
@@ -43,6 +47,7 @@ public class BattleSystem : MonoBehaviour
         {
             musicManager.ChangeSong(newSong);  // Play the new song in this specific scene
         }
+        hasAttacked = false;  // Reset the flag at the start of the battle
     }
 
     IEnumerator SetupBattle()
@@ -131,6 +136,7 @@ public class BattleSystem : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         // Move the player back to the original position
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
@@ -143,8 +149,6 @@ public class BattleSystem : MonoBehaviour
 
         // Hide damage after a short delay
         enemyDamageText.text = "";
-
-
 
         // Check if the enemy is dead
         if (isDead)
@@ -231,6 +235,7 @@ public class BattleSystem : MonoBehaviour
         if (state != BattleState.PLAYERTURN)
             return;
 
+        hasAttacked = true;  // Set this flag when the player attacks
         StartCoroutine(PlayerAttack());
     }
 
@@ -239,7 +244,13 @@ public class BattleSystem : MonoBehaviour
         if (state != BattleState.PLAYERTURN)
             return;
 
-        dialogueText.text = "You fled yippe";
+        if (hasAttacked)
+        {
+            dialogueText.text = "You cannot flee after attacking!";
+            return;  // Prevent the player from fleeing if they've attacked
+        }
+
+        dialogueText.text = "You fled yippe!";
         StartCoroutine(FleeBattle());
     }
     public void OnDefendButton()
@@ -318,7 +329,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load the Lobby scene
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene(battleScene);
 
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -341,7 +352,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene(battleScene);
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
@@ -349,5 +360,11 @@ public class BattleSystem : MonoBehaviour
         }
 
     }
+
+
+}
+
+
+
 
 
