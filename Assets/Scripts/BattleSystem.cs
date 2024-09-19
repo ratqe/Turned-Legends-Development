@@ -34,6 +34,8 @@ public class BattleSystem : MonoBehaviour
     public Text playerDamageText;
     public Text enemyDamageText;
 
+     private bool hasAttacked = false;
+
     void Start()
     {
         state = BattleState.START;
@@ -76,6 +78,8 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerAttack()
     {
+        hasAttacked = true;
+
         int damage = playerUnit.damage;  // player damage
 
         // Move the player closer to the enemy before attacking
@@ -238,6 +242,12 @@ public class BattleSystem : MonoBehaviour
     {
         if (state != BattleState.PLAYERTURN)
             return;
+
+        if (hasAttacked)
+        {
+            dialogueText.text = "You cannot flee after attacking!";
+            return;  // Prevent fleeing if player has attacked
+        }
 
         dialogueText.text = "You fled yippe";
         StartCoroutine(FleeBattle());
