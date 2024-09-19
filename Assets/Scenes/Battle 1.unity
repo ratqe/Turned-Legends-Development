@@ -861,7 +861,7 @@ MonoBehaviour:
   state: 0
   playerDamageText: {fileID: 857135611}
   enemyDamageText: {fileID: 1730772682}
-  battleScene: Lobby
+  battleScene: Generator
 --- !u!4 &754815014
 Transform:
   m_ObjectHideFlags: 0
