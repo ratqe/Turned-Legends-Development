@@ -305,8 +305,6 @@ public class BattleSystem : MonoBehaviour
 
 
 
-
-
     IEnumerator FleeBattle()
     {
         // Define how far the player will dash backwards and how long it will take
