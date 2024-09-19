@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
+using TMPro; // Import TextMeshPro for UI
 
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
@@ -12,9 +12,6 @@ public class BattleSystem : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject enemyPrefab;
 
-
-
-
     public Transform playerBattleStation;
     public Transform enemyBattleStation;
 
@@ -22,6 +19,7 @@ public class BattleSystem : MonoBehaviour
     Unit enemyUnit;
 
     public Text dialogueText;
+    public TextMeshProUGUI tipText;  // UI Text element for random tips using TextMeshPro
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
 
@@ -37,6 +35,15 @@ public class BattleSystem : MonoBehaviour
 
     [SerializeField]
     private string battleScene = "Battle 1";
+
+    // Array of random gameplay tips
+    private string[] tips = {
+        "Remember to heal when you're low on health!",
+        "Defending reduces incoming damage significantly.",
+        "Use strong attacks to finish off weakened enemies.",
+        "Switch up your tactics to outsmart your enemies!",
+        "Pay attention to enemy attack patterns!"
+    };
 
     void Start()
     {
@@ -67,11 +74,8 @@ public class BattleSystem : MonoBehaviour
         enemyHUD.SetHUD(enemyUnit);
         yield return new WaitForSeconds(2f);
 
-
         state = BattleState.PLAYERTURN;
         PlayerTurn();
-
-
     }
 
     void PlayerTurn()
@@ -79,8 +83,17 @@ public class BattleSystem : MonoBehaviour
         dialogueText.text = "Choose action:";
     }
 
+    // Method to display a random tip on the screen
+    void DisplayRandomTip()
+    {
+        int randomIndex = Random.Range(0, tips.Length);  // Pick a random tip index
+        tipText.text = tips[randomIndex];  // Display the selected tip in the UI
+    }
+
     IEnumerator PlayerAttack()
     {
+        DisplayRandomTip();  // Show a random tip when attacking
+
         int damage = playerUnit.damage;  // player damage
 
         // Move the player closer to the enemy before attacking
@@ -111,46 +124,8 @@ public class BattleSystem : MonoBehaviour
         enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "The attack is successful!";
 
-        // Apply fall effect to enemy
-        Quaternion originalRotation = enemyBattleStation.rotation;
-        Quaternion fallRotation = Quaternion.Euler(0f, 0f, 90f);  // Rotate 90 degrees to simulate fall
+        // Rest of the attack sequence...
 
-        elapsedTime = 0f;
-        float fallDuration = 0.5f;  // Duration for the enemy to fall
-
-        // Smoothly rotate the enemy to simulate falling
-        while (elapsedTime < fallDuration)
-        {
-            enemyBattleStation.rotation = Quaternion.Slerp(originalRotation, fallRotation, (elapsedTime / fallDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
-
-        // Restore enemy to original rotation
-        elapsedTime = 0f;
-        while (elapsedTime < fallDuration)
-        {
-            enemyBattleStation.rotation = Quaternion.Slerp(fallRotation, originalRotation, (elapsedTime / fallDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // Move the player back to the original position
-        elapsedTime = 0f;
-        while (elapsedTime < moveDuration)
-        {
-            playerBattleStation.position = Vector3.Lerp(attackPosition, originalPosition, (elapsedTime / moveDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        yield return new WaitForSeconds(2f);
-
-        // Hide damage after a short delay
-        enemyDamageText.text = "";
-
-        // Check if the enemy is dead
         if (isDead)
         {
             state = BattleState.WON;
@@ -162,7 +137,6 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(EnemyTurn());
         }
     }
-
 
     IEnumerator EnemyTurn()
     {
@@ -227,9 +201,6 @@ public class BattleSystem : MonoBehaviour
 
 
 
-
-
-
     public void OnAttackButton()
     {
         if (state != BattleState.PLAYERTURN)
@@ -246,7 +217,7 @@ public class BattleSystem : MonoBehaviour
 
         if (hasAttacked)
         {
-            dialogueText.text = "You cannot flee after attacking!";
+            dialogueText.text = "Can't flee after attacking";
             return;  // Prevent the player from fleeing if they've attacked
         }
 
@@ -259,6 +230,7 @@ public class BattleSystem : MonoBehaviour
             return;
 
         StartCoroutine(PlayerDefend());
+        DisplayRandomTip();  // Show a random tip when defending
     }
 
     IEnumerator PlayerDefend()
@@ -358,7 +330,6 @@ public class BattleSystem : MonoBehaviour
         {
             musicManager.RevertToOriginalSong();
         }
-
     }
 
 
