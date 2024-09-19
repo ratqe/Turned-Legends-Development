@@ -6,24 +6,24 @@ using UnityEngine.SceneManagement;
 public class EnemyTrigger : MonoBehaviour
 {
     [SerializeField]
-    private string battleScene = "Battle";
+    private string battleScene = "Battle 1";
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             SceneManager.LoadScene(battleScene);
-            DestroyPlayerOnSceneLoad();
+            //DestroyPlayerOnSceneLoad();
         }
     }
 
-    void DestroyPlayerOnSceneLoad()
+    /*void DestroyPlayerOnSceneLoad()
     {
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
             Destroy(player);
         }
-    }
+    }*/
 
 }
