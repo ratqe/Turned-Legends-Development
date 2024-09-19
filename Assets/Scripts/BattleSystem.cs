@@ -131,12 +131,6 @@ public class BattleSystem : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        yield return new WaitForSeconds(2f);
-
-        // Hide damage after a short delay
-        enemyDamageText.text = "";
-
         // Move the player back to the original position
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
@@ -145,6 +139,12 @@ public class BattleSystem : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        yield return new WaitForSeconds(2f);
+
+        // Hide damage after a short delay
+        enemyDamageText.text = "";
+
+
 
         // Check if the enemy is dead
         if (isDead)
@@ -162,6 +162,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
+        dialogueText.text = enemyUnit.unitName + " attacks!";
         float damage = enemyUnit.damage;  // Enemy's base damage
 
         // Move the enemy closer to the player before attacking
@@ -184,15 +185,19 @@ public class BattleSystem : MonoBehaviour
 
         // Trigger attack animation for the enemy
         anim.SetTrigger("Enemy1Attack");
-
         
 
         // Let the attack animation play
+       
         yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
+        playerDamageText.text = "-" + damage.ToString() + " HP";
 
         // Apply damage to the player
         bool isDead = playerUnit.TakeDamage((int)damage);
         playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
+
+        yield return new WaitForSeconds(1f);
+        playerDamageText.text = "";
 
         // Move the enemy back to its original position after the attack
         elapsedTime = 0f;
@@ -247,7 +252,6 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerDefend()
     {
-        // Move the player backward when defending
         Vector3 originalPosition = playerBattleStation.position;
         Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move player 1 unit backward
 
@@ -263,16 +267,17 @@ public class BattleSystem : MonoBehaviour
         }
 
         dialogueText.text = "Player is defending!";
-
-        // Activate defense (reduced damage)
-        playerUnit.isDefending = true;
-
-        // Hold the defend position until the enemy turn is over
-        yield return new WaitForSeconds(4f);  // Optional pause before enemy turn
+        playerUnit.isDefending = true;  // Defense is activated here
 
         // End the player's turn and switch to enemy turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
+
+        // Wait for the enemy turn to finish before moving back
+        while (state == BattleState.ENEMYTURN)
+        {
+            yield return null;
+        }
 
         // After the enemy's attack, return the player to the original position
         elapsedTime = 0f;
@@ -286,6 +291,7 @@ public class BattleSystem : MonoBehaviour
         // Turn off defending after the enemy's attack
         playerUnit.isDefending = false;
     }
+
 
 
 
