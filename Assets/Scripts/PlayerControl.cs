@@ -17,10 +17,18 @@ public class PlayerControl : MonoBehaviour
     private float dashTime;            // To track how long the dash lasts
     private Vector2 dashDirection;     // The direction the player will dash
 
+
+    private Inventory inventory;
+    [SerializeField] private UI_Inventory uiInventory;
+
     // Reference for animator from object
     private void Awake()
     {
         anim = GetComponent<Animator>();
+
+        inventory = new Inventory();
+        uiInventory.SetInventory(inventory);
+        
     }
 
     // Start is called before the first frame update
