@@ -14,7 +14,7 @@ public class DungeonGenerator : SimpleRandomWalkDungeonGenerator
     private float roomPercent = 0.8f;
 
     [SerializeField]
-    private GameObject enemyPrefab; // Reference to enemy prefab
+    private GameObject[] enemyPrefab; // Reference to enemy prefab
 
     [SerializeField]
     private int enemiesPerRoom = 2; // Number of enemies per room
@@ -71,8 +71,11 @@ public class DungeonGenerator : SimpleRandomWalkDungeonGenerator
             // Convert to Vector3 for positioning in the world
             Vector3 spawnPosition = new Vector3(randomRoomPosition.x, randomRoomPosition.y, 0);
 
+            // Pick a random enemy prefab from the array
+            GameObject randomEnemyPrefab = enemyPrefab[Random.Range(0, enemyPrefab.Length)];
+
             // Instantiate the enemy prefab at the chosen position
-            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            Instantiate(randomEnemyPrefab, spawnPosition, Quaternion.identity);
         }
     }
 
