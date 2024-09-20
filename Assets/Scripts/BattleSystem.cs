@@ -36,7 +36,7 @@ public class BattleSystem : MonoBehaviour
     
 
 
-
+    private Vector3 playerSpawnPosition;
     [SerializeField]
     private string battleScene = "Battle 1";
 
@@ -72,7 +72,8 @@ public class BattleSystem : MonoBehaviour
 
         anim = enemyGO.GetComponent<Animator>();
         playerAnim = playerGO.GetComponent<Animator>();
-
+        // player original position 
+        playerSpawnPosition = playerBattleStation.position;
         dialogueText.text = "A wild " + enemyUnit.unitName + " approaches fr";
 
         playerHUD.SetHUD(playerUnit);
@@ -183,6 +184,7 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+
     IEnumerator EnemyTurn()
     {
         dialogueText.text = enemyUnit.unitName + " attacks!";
@@ -243,6 +245,8 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+
+
     IEnumerator PlayerSpecialAttack()
     {
         DisplayRandomTip();  // Show a random tip when the special attack starts
@@ -326,6 +330,15 @@ public class BattleSystem : MonoBehaviour
         {
             enemyBattleStation.rotation = Quaternion.Slerp(fallRotation, originalRotation, (elapsedTimeFall / fallDuration));
             elapsedTimeFall += Time.deltaTime;
+            yield return null;
+        }
+
+        // Move the player back to the original spawn position after the attack
+        elapsedAttackTime = 0f;
+        while (elapsedAttackTime < attackMoveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(attackPosition, playerSpawnPosition, (elapsedAttackTime / attackMoveDuration));
+            elapsedAttackTime += Time.deltaTime;
             yield return null;
         }
 
