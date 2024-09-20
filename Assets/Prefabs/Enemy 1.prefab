@@ -48,10 +48,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitName: Ivon
-  unitLevel: 5
-  damage: 5
-  getHealth: 30
-  decrementHealth: 30
+  unitLevel: 7
+  damage: 7
+  getHealth: 35
+  decrementHealth: 35
+  isDefending: 0
 --- !u!95 &773733828683995868
 Animator:
   serializedVersion: 5
