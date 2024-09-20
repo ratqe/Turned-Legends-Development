@@ -9,6 +9,7 @@ public class Unit : MonoBehaviour
     public int damage;
     public int getHealth;
     public int decrementHealth;
+    public int maxHealth;
 
     public bool isDefending = false;  // Add this flag
 
@@ -16,8 +17,9 @@ public class Unit : MonoBehaviour
     {
         if (isDefending)
         {
-            // If the unit is defending, reduce the damage by a specific amount
-            dmg = Mathf.Max(0, dmg - 2);  // Damage reduced by 2
+            // If the unit is defending, reduce the damage by at least 50%
+            dmg = Mathf.Max(0, (int)(dmg * 0.5f));
+
         }
 
         decrementHealth -= dmg;
@@ -27,5 +29,15 @@ public class Unit : MonoBehaviour
         else
             return false;
     }
+
+	public void Heal(int amount)
+	{
+		decrementHealth += amount;
+		if (decrementHealth > getHealth)
+        {
+            decrementHealth = getHealth;
+        }
+			
+	}
 }
 

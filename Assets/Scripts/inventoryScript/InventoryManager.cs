@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class InventoryManager : MonoBehaviour
 {
+    // UI menu for inventory
     public GameObject InventoryMenu;
 
+    // Tracks if the inventory menu is opened or closed
     public bool isOpen;
+
+    // Array to hold item slots
     public ItemSlot[] itemSlot;
 
     // Start is called before the first frame update
     void Start()
     {
+        // Make sure the inventory isnt visible when game starts
         InventoryMenu.SetActive(false);
     }
 
@@ -60,23 +62,43 @@ public class InventoryManager : MonoBehaviour
         isOpen = false;
     }
 
-    public void AddItem(string itemName, int quantity, Sprite itemSprite)
+    // Adds item to inventory
+    public int AddItem(string itemName, int quantity, Sprite itemSprite, string itemDescription)
     {
-        for (int i = 0; i < itemSlot.Length; i++)
+        // First tries to add the item to an existing slot with the same item name
+        foreach (ItemSlot slot in itemSlot)
         {
-            if(itemSlot[i].isFull == false)
+            if (slot.itemName == itemName && slot.isFull == false)
             {
-                itemSlot[i].AddItem(itemName, quantity, itemSprite);
-                return;
+                int leftOverItems = slot.AddItem(itemName, quantity, itemSprite, itemDescription);
+                return leftOverItems;
             }
         }
+
+        // If no existing stack, add to an empty slot
+        foreach (ItemSlot slot in itemSlot)
+        {
+            if (!slot.isFull)
+            {
+                slot.AddItem(itemName, quantity, itemSprite, itemDescription);
+                return 0;
+            }
+        }
+        // If inventory is full, return the leftover quantity
+        return quantity;
     }
 
+
+    // Method to deselect all item slots
     public void DeselectAllSlots()
     {
+        // Goes through each slot to deselect it 
         for (int i = 0; i < itemSlot.Length; i++)
         {
+            // Disable the sharder effect
             itemSlot[i].selectedShader.SetActive(false);
+            
+            // Marks item as not selected
             itemSlot[i].thisItemSelected = false;
         }
     }
