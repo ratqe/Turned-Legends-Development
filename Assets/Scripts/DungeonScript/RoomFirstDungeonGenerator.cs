@@ -16,13 +16,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [SerializeField]
     private bool randomWalkRooms = false; // responsible to check if random walk room want to be use or square room
 
-    public Vector2Int spawnPosition; // Store spawn position
-
-    // Automatically generate the dungeon when the scene loads
-    private void Start()
-    {
-        GenerateDungeon();
-    }
+    public Vector2Int spawnPosition; // Store spawn 
 
     protected override void RunProceduralGeneration()
     {

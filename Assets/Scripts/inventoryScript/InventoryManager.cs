@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class OpenInvetory : MonoBehaviour
+public class InventoryManager : MonoBehaviour
 {
     public GameObject InventoryMenu;
 
     public bool isOpen;
+    public ItemSlot[] itemSlot;
 
     // Start is called before the first frame update
     void Start()
@@ -57,5 +58,26 @@ public class OpenInvetory : MonoBehaviour
         Time.timeScale = 1f;
 
         isOpen = false;
+    }
+
+    public void AddItem(string itemName, int quantity, Sprite itemSprite, string itemDescription)
+    {
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            if(itemSlot[i].isFull == false)
+            {
+                itemSlot[i].AddItem(itemName, quantity, itemSprite, itemDescription);
+                return;
+            }
+        }
+    }
+
+    public void DeselectAllSlots()
+    {
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            itemSlot[i].selectedShader.SetActive(false);
+            itemSlot[i].thisItemSelected = false;
+        }
     }
 }
