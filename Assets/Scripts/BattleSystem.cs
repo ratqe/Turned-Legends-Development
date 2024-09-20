@@ -360,6 +360,18 @@ public class BattleSystem : MonoBehaviour
     }
 
 
+	IEnumerator PlayerHeal()
+	{
+		playerUnit.Heal(24);
+
+		playerHUD.SetHP(playerUnit.decrementHealth);
+		dialogueText.text = "Regenerate! Heal for 24 HP!";
+
+		yield return new WaitForSeconds(2f);
+
+		state = BattleState.ENEMYTURN;
+		StartCoroutine(EnemyTurn());
+	}
 
 
 
@@ -381,6 +393,16 @@ public class BattleSystem : MonoBehaviour
             hasAttacked = true;  // Set this flag when the player attacks
             StartCoroutine(PlayerAttack());
         }
+    }
+
+    public void OnHealButton()
+    {
+        if (state != BattleState.PLAYERTURN)
+        {
+            return;
+        }
+
+        StartCoroutine(PlayerHeal());
     }
 
 
