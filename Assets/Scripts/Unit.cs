@@ -9,6 +9,7 @@ public class Unit : MonoBehaviour
     public int damage;
     public int getHealth;
     public int decrementHealth;
+    public int maxHealth;
 
     public bool isDefending = false;  // Add this flag
 
@@ -26,6 +27,17 @@ public class Unit : MonoBehaviour
             return true;
         else
             return false;
+    }
+
+    // Method to heal or restore health
+    public void Heal(int amount)
+    {
+        decrementHealth += amount;
+        
+        // Ensure health doesn't exceed maxHealth
+        decrementHealth = Mathf.Clamp(decrementHealth, 0, maxHealth);
+
+        Debug.Log($"{unitName} healed for {amount}. Current health: {decrementHealth}/{maxHealth}");
     }
 }
 

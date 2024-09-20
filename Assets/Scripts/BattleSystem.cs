@@ -33,6 +33,8 @@ public class BattleSystem : MonoBehaviour
     public Text enemyDamageText;
     private bool hasAttacked = false;  // Flag to track if the player has attacked 
     private int attackCount = 0;  // Counter to track the number of attacks
+    
+
 
 
     [SerializeField]
@@ -468,7 +470,6 @@ public class BattleSystem : MonoBehaviour
             musicManager.RevertToOriginalSong();
         }
     }
-
 
     IEnumerator EndBattle()
     {
