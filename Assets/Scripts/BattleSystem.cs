@@ -222,14 +222,14 @@ public class BattleSystem : MonoBehaviour
         // Apply damage to the player
         bool isDead = playerUnit.TakeDamage((int)damage);
         playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
-float finalDamage = damage;
 
-if (playerUnit.isDefending)
-{
-    finalDamage = (int)(damage * 0.5f);
-}
+        float finalDamage = damage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(damage * 0.5f);
+        }
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
 
-playerDamageText.text = "-" + finalDamage.ToString() + " HP";
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 
@@ -444,6 +444,8 @@ playerDamageText.text = "-" + finalDamage.ToString() + " HP";
 
         buttonAction = true;
     }
+
+    
     public void OnDefendButton()
     {
         if (state != BattleState.PLAYERTURN || buttonAction)
