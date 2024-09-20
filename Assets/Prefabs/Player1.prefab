@@ -47,10 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitName: Timtam
-  unitLevel: 69
-  damage: 10
-  getHealth: 30
-  decrementHealth: 30
+  unitLevel: 5
+  damage: 5
+  getHealth: 25
+  decrementHealth: 25
   isDefending: 0
 --- !u!212 &5626499423768275182
 SpriteRenderer:
