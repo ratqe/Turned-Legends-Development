@@ -217,12 +217,19 @@ public class BattleSystem : MonoBehaviour
         // Let the attack animation play
 
         yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
-        playerDamageText.text = "-" + damage.ToString() + " HP";
+
 
         // Apply damage to the player
         bool isDead = playerUnit.TakeDamage((int)damage);
         playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
+float finalDamage = damage;
 
+if (playerUnit.isDefending)
+{
+    finalDamage = (int)(damage * 0.5f);
+}
+
+playerDamageText.text = "-" + finalDamage.ToString() + " HP";
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 

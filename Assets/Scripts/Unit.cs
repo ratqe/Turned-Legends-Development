@@ -19,7 +19,7 @@ public class Unit : MonoBehaviour
         {
             // If the unit is defending, reduce the damage by at least 50%
             dmg = Mathf.Max(0, (int)(dmg * 0.5f));
-        Debug.Log("Player is defending. Reduced damage to: " + dmg);
+
         }
 
         decrementHealth -= dmg;
