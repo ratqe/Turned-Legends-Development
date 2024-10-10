@@ -172,7 +172,7 @@ public class BattleSystem : MonoBehaviour
         // Hide damage after a short delay
         enemyDamageText.text = "";
 
-        // Rest of the attack sequence...
+        // Rest of the attack sequence
 
         if (isDead)
         {
