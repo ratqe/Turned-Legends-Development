@@ -33,8 +33,9 @@ public class BattleSystem : MonoBehaviour
     public Text enemyDamageText;
     private bool hasAttacked = false;  // Flag to track if the player has attacked 
     private int attackCount = 0;  // Counter to track the number of attacks
-    
+    private int defendCount = 0;
 
+    private bool buttonAction = false; 
 
     private Vector3 playerSpawnPosition;
     [SerializeField]
@@ -74,7 +75,7 @@ public class BattleSystem : MonoBehaviour
         playerAnim = playerGO.GetComponent<Animator>();
         // player original position 
         playerSpawnPosition = playerBattleStation.position;
-        dialogueText.text = "A wild " + enemyUnit.unitName + " approaches fr";
+        dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
 
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
@@ -87,6 +88,7 @@ public class BattleSystem : MonoBehaviour
     void PlayerTurn()
     {
         dialogueText.text = "Choose action:";
+        buttonAction = false; //reset button boolean
     }
 
     // Method to display a random tip on the screen
@@ -215,11 +217,18 @@ public class BattleSystem : MonoBehaviour
         // Let the attack animation play
 
         yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
-        playerDamageText.text = "-" + damage.ToString() + " HP";
+
 
         // Apply damage to the player
         bool isDead = playerUnit.TakeDamage((int)damage);
         playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
+
+        float finalDamage = damage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(damage * 0.5f);
+        }
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
 
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
@@ -360,12 +369,24 @@ public class BattleSystem : MonoBehaviour
     }
 
 
+	IEnumerator PlayerHeal()
+	{
+		playerUnit.Heal(24);
+
+		playerHUD.SetHP(playerUnit.decrementHealth);
+		dialogueText.text = "Regenerate! Heal for 24 HP!";
+
+		yield return new WaitForSeconds(2f);
+
+		state = BattleState.ENEMYTURN;
+		StartCoroutine(EnemyTurn());
+	}
 
 
 
     public void OnAttackButton()
     {
-        if (state != BattleState.PLAYERTURN)
+        if (state != BattleState.PLAYERTURN || buttonAction)
             return;
 
         attackCount++;  // Increment the attack counter
@@ -381,12 +402,35 @@ public class BattleSystem : MonoBehaviour
             hasAttacked = true;  // Set this flag when the player attacks
             StartCoroutine(PlayerAttack());
         }
+        buttonAction = true; //user has used a button
+    }
+
+    public void OnHealButton()
+    {
+        if (state != BattleState.PLAYERTURN || buttonAction)
+        {
+            return;
+        }
+
+        // will check if the player has defended at least twice
+        if (defendCount < 2)
+        {
+            dialogueText.text = "Defend twice first before healing!";
+            return;
+        }
+
+        // if defended at least twice, allow healing
+        StartCoroutine(PlayerHeal());
+        
+        // Reset the defend count after healing
+        defendCount = 0;
+        buttonAction = true;
     }
 
 
     public void OnFleeButton()
     {
-        if (state != BattleState.PLAYERTURN)
+        if (state != BattleState.PLAYERTURN || buttonAction)
             return;
 
         if (hasAttacked)
@@ -397,14 +441,19 @@ public class BattleSystem : MonoBehaviour
 
         dialogueText.text = "You fled yippe!";
         StartCoroutine(FleeBattle());
+
+        buttonAction = true;
     }
+
+    
     public void OnDefendButton()
     {
-        if (state != BattleState.PLAYERTURN)
+        if (state != BattleState.PLAYERTURN || buttonAction)
             return;
 
         StartCoroutine(PlayerDefend());
         DisplayRandomTip();  // Show a random tip when defending
+        buttonAction = true; //user has used a button
     }
 
     IEnumerator PlayerDefend()
@@ -414,7 +463,7 @@ public class BattleSystem : MonoBehaviour
 
         float elapsedTime = 0f;
         float moveDuration = 0.4f;  // Duration for the movement
-
+        dialogueText.text = "Player is defending!";
         // Smoothly move the player backward
         while (elapsedTime < moveDuration)
         {
@@ -423,9 +472,11 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-        dialogueText.text = "Player is defending!";
+       
         playerUnit.isDefending = true;  // Defense is activated here
 
+        defendCount++;
+        yield return new WaitForSeconds(2f);
         // End the player's turn and switch to enemy turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
@@ -488,7 +539,7 @@ public class BattleSystem : MonoBehaviour
     {
         if (state == BattleState.WON)
         {
-            dialogueText.text = "You won the battle congrats!!!! gjg";
+            dialogueText.text = "You won the battle congrats!!!!";
         }
         else if (state == BattleState.LOST)
         {

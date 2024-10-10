@@ -17,8 +17,9 @@ public class Unit : MonoBehaviour
     {
         if (isDefending)
         {
-            // If the unit is defending, reduce the damage by a specific amount
-            dmg = Mathf.Max(0, dmg - 2);  // Damage reduced by 2
+            // If the unit is defending, reduce the damage by at least 50%
+            dmg = Mathf.Max(0, (int)(dmg * 0.5f));
+
         }
 
         decrementHealth -= dmg;
@@ -29,15 +30,14 @@ public class Unit : MonoBehaviour
             return false;
     }
 
-    // Method to heal or restore health
-    public void Heal(int amount)
-    {
-        decrementHealth += amount;
-        
-        // Ensure health doesn't exceed maxHealth
-        decrementHealth = Mathf.Clamp(decrementHealth, 0, maxHealth);
-
-        Debug.Log($"{unitName} healed for {amount}. Current health: {decrementHealth}/{maxHealth}");
-    }
+	public void Heal(int amount)
+	{
+		decrementHealth += amount;
+		if (decrementHealth > getHealth)
+        {
+            decrementHealth = getHealth;
+        }
+			
+	}
 }
 
