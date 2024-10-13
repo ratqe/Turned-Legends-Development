@@ -556,5 +556,23 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    IEnumerator SetupNewBattle()
+    {
+        Destroy(enemyBattleStation.GetChild(0).gameObject); // Remove the defeated enemy
+
+        GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
+        enemyUnit = enemyGO.GetComponent<Unit>();
+
+        anim = enemyGO.GetComponent<Animator>();
+
+        dialogueText.text = "A new enemy " + enemyUnit.unitName + " appears!";
+        
+        playerHUD.SetHUD(playerUnit);
+        enemyHUD.SetHUD(enemyUnit);
+        yield return new WaitForSeconds(2f);
+
+        state = BattleState.PLAYERTURN;
+        PlayerTurn();
+    }
 
 }
