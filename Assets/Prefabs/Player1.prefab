@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Timtam
   unitLevel: 6
-  damage: 6
+  damage: 50
   getHealth: 30
   decrementHealth: 30
   maxHealth: 0
