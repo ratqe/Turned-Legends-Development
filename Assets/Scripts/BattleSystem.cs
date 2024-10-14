@@ -33,10 +33,15 @@ public class BattleSystem : MonoBehaviour
     public Text enemyDamageText;
     private bool hasAttacked = false;  // Flag to track if the player has attacked 
     private int attackCount = 0;  // Counter to track the number of attacks
+    private int defendCount = 0;
 
+    private bool buttonAction = false; 
 
+    private Vector3 playerSpawnPosition;
     [SerializeField]
     private string battleScene = "Battle 1";
+
+    public GameObject endBattlePanel; 
 
     // Array of random gameplay tips
     private string[] tips = {
@@ -70,8 +75,9 @@ public class BattleSystem : MonoBehaviour
 
         anim = enemyGO.GetComponent<Animator>();
         playerAnim = playerGO.GetComponent<Animator>();
-
-        dialogueText.text = "A wild " + enemyUnit.unitName + " approaches fr";
+        // player original position 
+        playerSpawnPosition = playerBattleStation.position;
+        dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
 
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
@@ -84,6 +90,7 @@ public class BattleSystem : MonoBehaviour
     void PlayerTurn()
     {
         dialogueText.text = "Choose action:";
+        buttonAction = false; //reset button boolean
     }
 
     // Method to display a random tip on the screen
@@ -181,6 +188,7 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+
     IEnumerator EnemyTurn()
     {
         dialogueText.text = enemyUnit.unitName + " attacks!";
@@ -211,11 +219,18 @@ public class BattleSystem : MonoBehaviour
         // Let the attack animation play
 
         yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
-        playerDamageText.text = "-" + damage.ToString() + " HP";
+
 
         // Apply damage to the player
         bool isDead = playerUnit.TakeDamage((int)damage);
         playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
+
+        float finalDamage = damage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(damage * 0.5f);
+        }
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
 
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
@@ -241,6 +256,8 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+
+
     IEnumerator PlayerSpecialAttack()
     {
         DisplayRandomTip();  // Show a random tip when the special attack starts
@@ -327,6 +344,15 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
+        // Move the player back to the original spawn position after the attack
+        elapsedAttackTime = 0f;
+        while (elapsedAttackTime < attackMoveDuration)
+        {
+            playerBattleStation.position = Vector3.Lerp(attackPosition, playerSpawnPosition, (elapsedAttackTime / attackMoveDuration));
+            elapsedAttackTime += Time.deltaTime;
+            yield return null;
+        }
+
         yield return new WaitForSeconds(2f);
 
         // Hide damage after a short delay
@@ -345,12 +371,24 @@ public class BattleSystem : MonoBehaviour
     }
 
 
+	IEnumerator PlayerHeal()
+	{
+		playerUnit.Heal(24);
+
+		playerHUD.SetHP(playerUnit.decrementHealth);
+		dialogueText.text = "Regenerate! Heal for 24 HP!";
+
+		yield return new WaitForSeconds(2f);
+
+		state = BattleState.ENEMYTURN;
+		StartCoroutine(EnemyTurn());
+	}
 
 
 
     public void OnAttackButton()
     {
-        if (state != BattleState.PLAYERTURN)
+        if (state != BattleState.PLAYERTURN || buttonAction)
             return;
 
         attackCount++;  // Increment the attack counter
@@ -366,12 +404,35 @@ public class BattleSystem : MonoBehaviour
             hasAttacked = true;  // Set this flag when the player attacks
             StartCoroutine(PlayerAttack());
         }
+        buttonAction = true; //user has used a button
+    }
+
+    public void OnHealButton()
+    {
+        if (state != BattleState.PLAYERTURN || buttonAction)
+        {
+            return;
+        }
+
+        // will check if the player has defended at least twice
+        if (defendCount < 2)
+        {
+            dialogueText.text = "Defend twice first before healing!";
+            return;
+        }
+
+        // if defended at least twice, allow healing
+        StartCoroutine(PlayerHeal());
+        
+        // Reset the defend count after healing
+        defendCount = 0;
+        buttonAction = true;
     }
 
 
     public void OnFleeButton()
     {
-        if (state != BattleState.PLAYERTURN)
+        if (state != BattleState.PLAYERTURN || buttonAction)
             return;
 
         if (hasAttacked)
@@ -382,14 +443,19 @@ public class BattleSystem : MonoBehaviour
 
         dialogueText.text = "You fled yippe!";
         StartCoroutine(FleeBattle());
+
+        buttonAction = true;
     }
+
+    
     public void OnDefendButton()
     {
-        if (state != BattleState.PLAYERTURN)
+        if (state != BattleState.PLAYERTURN || buttonAction)
             return;
 
         StartCoroutine(PlayerDefend());
         DisplayRandomTip();  // Show a random tip when defending
+        buttonAction = true; //user has used a button
     }
 
     IEnumerator PlayerDefend()
@@ -399,7 +465,7 @@ public class BattleSystem : MonoBehaviour
 
         float elapsedTime = 0f;
         float moveDuration = 0.4f;  // Duration for the movement
-
+        dialogueText.text = "Player is defending!";
         // Smoothly move the player backward
         while (elapsedTime < moveDuration)
         {
@@ -408,9 +474,11 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-        dialogueText.text = "Player is defending!";
+       
         playerUnit.isDefending = true;  // Defense is activated here
 
+        defendCount++;
+        yield return new WaitForSeconds(2f);
         // End the player's turn and switch to enemy turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
@@ -433,10 +501,6 @@ public class BattleSystem : MonoBehaviour
         // Turn off defending after the enemy's attack
         playerUnit.isDefending = false;
     }
-
-
-
-
 
 
     IEnumerator FleeBattle()
@@ -469,32 +533,67 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-
     IEnumerator EndBattle()
     {
         if (state == BattleState.WON)
         {
-            dialogueText.text = "You won the battle congrats!!!! gjg";
+            dialogueText.text = "You won the battle congrats!!!!";
+            // Displaying options for continuing the battle or exiting
+            EndBattleOptions();
         }
         else if (state == BattleState.LOST)
         {
             dialogueText.text = "You were defeated :/";
+            yield return new WaitForSeconds(3f);
+
+            SceneManager.LoadScene(battleScene);
+            MusicManager musicManager = FindObjectOfType<MusicManager>();
+            if (musicManager != null)
+            {
+                musicManager.RevertToOriginalSong();
+            }
         }
 
-        yield return new WaitForSeconds(3f);
 
-        SceneManager.LoadScene(battleScene);
-        MusicManager musicManager = FindObjectOfType<MusicManager>();
-        if (musicManager != null)
-        {
-            musicManager.RevertToOriginalSong();
-        }
+    }
+
+    IEnumerator SetupNewBattle()
+    {
+        Destroy(enemyBattleStation.GetChild(0).gameObject); // Remove the defeated enemy
+
+        GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
+        enemyUnit = enemyGO.GetComponent<Unit>();
+
+        anim = enemyGO.GetComponent<Animator>();
+
+        dialogueText.text = "A new enemy " + enemyUnit.unitName + " appears!";
+        
+        playerHUD.SetHUD(playerUnit);
+        enemyHUD.SetHUD(enemyUnit);
+        yield return new WaitForSeconds(2f);
+
+        state = BattleState.PLAYERTURN;
+        PlayerTurn();
     }
 
 
+
+    void EndBattleOptions()
+    {
+        endBattlePanel.SetActive(true); // Show the panel when the battle ends
+    }
+
+    public void ContinueButton()
+    {
+        endBattlePanel.SetActive(false); // Hide the panel
+        StartCoroutine(SetupNewBattle()); // starts a new battle 
+    }
+
+    public void ExitButton()
+    {
+        SceneManager.LoadScene(6); // Load back to lobby
+    }
+
+
+
 }
-
-
-
-
-
