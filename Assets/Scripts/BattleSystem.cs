@@ -41,6 +41,8 @@ public class BattleSystem : MonoBehaviour
     [SerializeField]
     private string battleScene = "Battle 1";
 
+    public GameObject endBattlePanel; 
+
     // Array of random gameplay tips
     private string[] tips = {
         
@@ -501,10 +503,6 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-
-
-
-
     IEnumerator FleeBattle()
     {
         // Define how far the player will dash backwards and how long it will take
@@ -540,20 +538,23 @@ public class BattleSystem : MonoBehaviour
         if (state == BattleState.WON)
         {
             dialogueText.text = "You won the battle congrats!!!!";
+            // Displaying options for continuing the battle or exiting
+            EndBattleOptions();
         }
         else if (state == BattleState.LOST)
         {
             dialogueText.text = "You were defeated :/";
+            yield return new WaitForSeconds(3f);
+
+            SceneManager.LoadScene(battleScene);
+            MusicManager musicManager = FindObjectOfType<MusicManager>();
+            if (musicManager != null)
+            {
+                musicManager.RevertToOriginalSong();
+            }
         }
 
-        yield return new WaitForSeconds(3f);
 
-        SceneManager.LoadScene(battleScene);
-        MusicManager musicManager = FindObjectOfType<MusicManager>();
-        if (musicManager != null)
-        {
-            musicManager.RevertToOriginalSong();
-        }
     }
 
     IEnumerator SetupNewBattle()
@@ -574,5 +575,25 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
+
+
+
+    void EndBattleOptions()
+    {
+        endBattlePanel.SetActive(true); // Show the panel when the battle ends
+    }
+
+    public void ContinueButton()
+    {
+        endBattlePanel.SetActive(false); // Hide the panel
+        StartCoroutine(SetupNewBattle()); // starts a new battle 
+    }
+
+    public void ExitButton()
+    {
+        SceneManager.LoadScene(6); // Load back to lobby
+    }
+
+
 
 }
