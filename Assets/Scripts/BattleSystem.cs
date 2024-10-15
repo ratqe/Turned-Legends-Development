@@ -57,6 +57,8 @@ public class BattleSystem : MonoBehaviour
     private bool isSpeedUp = false;  // Track whether the game is sped up
     public Button speedUpButton;     // Reference to the Speed Up button
 
+    public float elapsedTime { get; private set; }
+
     void Start()
     {
         state = BattleState.START;
