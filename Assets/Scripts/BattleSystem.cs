@@ -38,7 +38,7 @@ public class BattleSystem : MonoBehaviour
     private int defendCount = 0;
     private int enemyAttackCount = 0;
     private bool isSpeedUp = false;
-    
+
 
     private bool buttonAction = false;
 
@@ -75,7 +75,7 @@ public class BattleSystem : MonoBehaviour
 
     public void ToggleSpeed()
     {
-        
+
 
         if (!isSpeedUp)
         {
@@ -231,18 +231,44 @@ public class BattleSystem : MonoBehaviour
 
         float damage = enemyUnit.damage;  // Enemy's base damage
 
-        // Move the enemy straight toward the player for the attack
-        Vector3 originalPosition = enemyBattleStation.position;
-        Vector3 attackPosition = playerBattleStation.position + new Vector3(1.5f, 0, 0);  // Adjust the X value as needed
+        // Define waypoints for the enemy to move around before attacking
+        Vector3[] waypoints = new Vector3[]
+        {
+            enemyBattleStation.position + new Vector3(3f, 0, 0),  // Right
+            enemyBattleStation.position + new Vector3(3f, 2f, 0),  // Up
+            enemyBattleStation.position + new Vector3(-3f, 2f, 0),  // Left
+            enemyBattleStation.position + new Vector3(-3f, 0, 0)   // Down
+        };
+
+        float moveDuration = 0.5f;
+
+        // Move the enemy around the waypoints
+        foreach (Vector3 waypoint in waypoints)
+        {
+            float elapsedTime = 0f;
+            Vector3 originalPosition = enemyBattleStation.position;
+
+            while (elapsedTime < moveDuration)
+            {
+                enemyBattleStation.position = Vector3.Lerp(originalPosition, waypoint, (elapsedTime / moveDuration));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            originalPosition = waypoint;
+        }
+
+        // After moving around, move the enemy closer to the player for the attack
+        Vector3 attackPosition = playerBattleStation.position + new Vector3(2f, 0, 0);  // Adjust the X value as needed
 
         float attackMoveDuration = 0.9f;  // Duration for the movement toward the player
-        float elapsedTime = 0f;
+        float elapsedAttackTime = 0f;
 
         // Smoothly move the enemy toward the player
-        while (elapsedTime < attackMoveDuration)
+        while (elapsedAttackTime < attackMoveDuration)
         {
-            enemyBattleStation.position = Vector3.Lerp(originalPosition, attackPosition, (elapsedTime / attackMoveDuration));
-            elapsedTime += Time.deltaTime;
+            enemyBattleStation.position = Vector3.Lerp(enemyBattleStation.position, attackPosition, (elapsedAttackTime / attackMoveDuration));
+            elapsedAttackTime += Time.deltaTime;
             yield return null;
         }
 
@@ -256,16 +282,24 @@ public class BattleSystem : MonoBehaviour
         bool isDead = playerUnit.TakeDamage((int)damage);
         playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
 
-        playerDamageText.text = "-" + damage.ToString() + " HP";
+        float finalDamage = damage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(damage * 0.5f);
+        }
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
+
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 
-        // Move the enemy back to its original position after the attack
+        // Move the enemy back to a closer position after the attack
+        Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
+
         float returnMoveDuration = 0.5f;
         elapsedTime = 0f;
         while (elapsedTime < returnMoveDuration)
         {
-            enemyBattleStation.position = Vector3.Lerp(attackPosition, originalPosition, (elapsedTime / returnMoveDuration));
+            enemyBattleStation.position = Vector3.Lerp(attackPosition, closerPosition, (elapsedTime / returnMoveDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -282,7 +316,6 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
-
 
     IEnumerator EnemySpecialAttack()
     {
@@ -472,6 +505,8 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(EnemyTurn());
     }
 
+    
+
 
 
     public void OnAttackButton()
@@ -549,11 +584,14 @@ public class BattleSystem : MonoBehaviour
     IEnumerator PlayerDefend()
     {
         Vector3 originalPosition = playerBattleStation.position;
-        Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move player 1 unit backward
+
+        // Move only 1 unit straight backward
+        Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move 1 unit backward
 
         float elapsedTime = 0f;
         float moveDuration = 0.4f;  // Duration for the movement
         dialogueText.text = "Player is defending!";
+
         // Smoothly move the player backward
         while (elapsedTime < moveDuration)
         {
@@ -562,11 +600,10 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-
         playerUnit.isDefending = true;  // Defense is activated here
-
         defendCount++;
         yield return new WaitForSeconds(2f);
+
         // End the player's turn and switch to enemy turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
