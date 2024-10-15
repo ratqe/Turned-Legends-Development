@@ -79,7 +79,7 @@ public class BattleSystem : MonoBehaviour
 
         if (!isSpeedUp)
         {
-            Time.timeScale = 2f;
+            Time.timeScale = 5f;
             speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";  // Update button text
         }
         else
