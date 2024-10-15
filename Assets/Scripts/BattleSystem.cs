@@ -22,8 +22,10 @@ public class BattleSystem : MonoBehaviour
     public TextMeshProUGUI tipText;  // UI Text element for random tips using TextMeshPro
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
-
+    public Button speedUpButton;
     public AudioClip newSong;
+
+
 
     public BattleState state;
 
@@ -35,6 +37,8 @@ public class BattleSystem : MonoBehaviour
     private int attackCount = 0;  // Counter to track the number of attacks
     private int defendCount = 0;
     private int enemyAttackCount = 0;
+    private bool isSpeedUp = false;
+    
 
     private bool buttonAction = false;
 
@@ -46,6 +50,7 @@ public class BattleSystem : MonoBehaviour
 
     // Array of random gameplay tips
     private string[] tips = {
+
         "Tips: Remember to heal when you're low on health!",
         "Tips: Defending reduces incoming damage significantly.",
         "Tips: Use strong attacks to finish off weakened enemies.",
@@ -53,37 +58,39 @@ public class BattleSystem : MonoBehaviour
         "Tips: Pay attention to enemy attack patterns!"
     };
 
-    // Time scale toggle variables
-    private bool isSpeedUp = false;  // Track whether the game is sped up
-    public Button speedUpButton;     // Reference to the Speed Up button
-
     public float elapsedTime { get; private set; }
 
     void Start()
     {
         state = BattleState.START;
         StartCoroutine(SetupBattle());
-
-        // Set the button's click event to toggle speed
+        MusicManager musicManager = FindObjectOfType<MusicManager>();
+        if (musicManager != null)
+        {
+            musicManager.ChangeSong(newSong);  // Play the new song in this specific scene
+        }
+        hasAttacked = false;  // Reset the flag at the start of the battle
         speedUpButton.onClick.AddListener(ToggleSpeed);
     }
 
-    // Method to toggle gameplay speed
-    void ToggleSpeed()
+    public void ToggleSpeed()
     {
+        
+
         if (!isSpeedUp)
         {
-            Time.timeScale = 2f;  // Speed up gameplay (2x faster)
+            Time.timeScale = 2f;
             speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";  // Update button text
         }
         else
         {
-            Time.timeScale = 1f;  // Restore normal speed
+            Time.timeScale = 1f;
             speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Speed Up";  // Update button text
         }
 
         isSpeedUp = !isSpeedUp;  // Toggle the speed flag
     }
+
 
     IEnumerator SetupBattle()
     {
@@ -95,6 +102,7 @@ public class BattleSystem : MonoBehaviour
 
         anim = enemyGO.GetComponent<Animator>();
         playerAnim = playerGO.GetComponent<Animator>();
+        // player original position 
         playerSpawnPosition = playerBattleStation.position;
         dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
 
@@ -371,7 +379,7 @@ public class BattleSystem : MonoBehaviour
 
 
 
-IEnumerator PlayerSpecialAttack()
+    IEnumerator PlayerSpecialAttack()
     {
         DisplayRandomTip();  // Show a random tip when the special attack starts
 
