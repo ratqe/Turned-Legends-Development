@@ -35,23 +35,25 @@ public class BattleSystem : MonoBehaviour
     private int attackCount = 0;  // Counter to track the number of attacks
     private int defendCount = 0;
 
-    private bool buttonAction = false; 
+    private bool buttonAction = false;
+    private int enemyAttackCount = 0;
 
     private Vector3 playerSpawnPosition;
     [SerializeField]
     private string battleScene = "Battle 1";
 
-    public GameObject endBattlePanel; 
+    public GameObject endBattlePanel;
 
     // Array of random gameplay tips
     private string[] tips = {
-        
+
         "Tips: Remember to heal when you're low on health!",
         "Tips: Defending reduces incoming damage significantly.",
         "Tips: Use strong attacks to finish off weakened enemies.",
         "Tips: Switch up your tactics to outsmart your enemies!",
         "Tips: Pay attention to enemy attack patterns!"
     };
+    private float elapsedTime;
 
     void Start()
     {
@@ -191,35 +193,65 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
-        dialogueText.text = enemyUnit.unitName + " attacks!";
+        dialogueText.text = enemyUnit.unitName + " is preparing an attack!";
+        enemyAttackCount++;  // Increment the enemy's attack counter
+
+        if (enemyAttackCount >= 4)
+        {
+            // Trigger the enemy's special move on the fourth attack
+            StartCoroutine(EnemySpecialAttack());
+            enemyAttackCount = 0;  // Reset the counter after the special attack
+            yield break;  // Exit this coroutine after the special attack
+        }
+
         float damage = enemyUnit.damage;  // Enemy's base damage
 
-        // Move the enemy closer to the player before attacking
-        Vector3 originalPosition = enemyBattleStation.position;
+        // Define waypoints for the enemy to move around before attacking
+        Vector3[] waypoints = new Vector3[]
+        {
+            enemyBattleStation.position + new Vector3(3f, 0, 0),  // Right
+            enemyBattleStation.position + new Vector3(3f, 2f, 0),  // Up
+            enemyBattleStation.position + new Vector3(-3f, 2f, 0),  // Left
+            enemyBattleStation.position + new Vector3(-3f, 0, 0)   // Down
+        };
 
-        // Position the enemy directly in front of the player
-        // Reduce the distance to a smaller value to position the enemy very close to the player
-        Vector3 attackPosition = playerBattleStation.position + new Vector3(4f, 0, 0);  // Adjust the X value as needed
+        float moveDuration = 0.5f;
 
-        float elapsedTime = 0f;
-        float moveDuration = 0.9f;  // Duration for the movement toward the player
+        // Move the enemy around the waypoints
+        foreach (Vector3 waypoint in waypoints)
+        {
+            float elapsedTime = 0f;
+            Vector3 originalPosition = enemyBattleStation.position;
+
+            while (elapsedTime < moveDuration)
+            {
+                enemyBattleStation.position = Vector3.Lerp(originalPosition, waypoint, (elapsedTime / moveDuration));
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            originalPosition = waypoint;
+        }
+
+        // After moving around, move the enemy closer to the player for the attack
+        Vector3 attackPosition = playerBattleStation.position + new Vector3(2f, 0, 0);  // Adjust the X value as needed
+
+        float attackMoveDuration = 0.9f;  // Duration for the movement toward the player
+        float elapsedAttackTime = 0f;
 
         // Smoothly move the enemy toward the player
-        while (elapsedTime < moveDuration)
+        while (elapsedAttackTime < attackMoveDuration)
         {
-            enemyBattleStation.position = Vector3.Lerp(originalPosition, attackPosition, (elapsedTime / moveDuration));
-            elapsedTime += Time.deltaTime;
+            enemyBattleStation.position = Vector3.Lerp(enemyBattleStation.position, attackPosition, (elapsedAttackTime / attackMoveDuration));
+            elapsedAttackTime += Time.deltaTime;
             yield return null;
         }
 
         // Trigger attack animation for the enemy
         anim.SetTrigger("Enemy1Attack");
 
-
         // Let the attack animation play
-
-        yield return new WaitForSeconds(0.6f);  // Adjust this duration to match your animation length
-
+        yield return new WaitForSeconds(0.6f);
 
         // Apply damage to the player
         bool isDead = playerUnit.TakeDamage((int)damage);
@@ -235,11 +267,14 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 
-        // Move the enemy back to its original position after the attack
+        // Move the enemy back to a closer position after the attack
+        Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
+
+        float returnMoveDuration = 0.5f;
         elapsedTime = 0f;
-        while (elapsedTime < moveDuration)
+        while (elapsedTime < returnMoveDuration)
         {
-            enemyBattleStation.position = Vector3.Lerp(attackPosition, originalPosition, (elapsedTime / moveDuration));
+            enemyBattleStation.position = Vector3.Lerp(attackPosition, closerPosition, (elapsedTime / returnMoveDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -256,6 +291,8 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
     }
+
+
 
 
     IEnumerator PlayerSpecialAttack()
@@ -371,18 +408,18 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-	IEnumerator PlayerHeal()
-	{
-		playerUnit.Heal(24);
+    IEnumerator PlayerHeal()
+    {
+        playerUnit.Heal(24);
 
-		playerHUD.SetHP(playerUnit.decrementHealth);
-		dialogueText.text = "Regenerate! Heal for 24 HP!";
+        playerHUD.SetHP(playerUnit.decrementHealth);
+        dialogueText.text = "Regenerate! Heal for 24 HP!";
 
-		yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2f);
 
-		state = BattleState.ENEMYTURN;
-		StartCoroutine(EnemyTurn());
-	}
+        state = BattleState.ENEMYTURN;
+        StartCoroutine(EnemyTurn());
+    }
 
 
 
@@ -423,7 +460,7 @@ public class BattleSystem : MonoBehaviour
 
         // if defended at least twice, allow healing
         StartCoroutine(PlayerHeal());
-        
+
         // Reset the defend count after healing
         defendCount = 0;
         buttonAction = true;
@@ -447,7 +484,7 @@ public class BattleSystem : MonoBehaviour
         buttonAction = true;
     }
 
-    
+
     public void OnDefendButton()
     {
         if (state != BattleState.PLAYERTURN || buttonAction)
@@ -464,8 +501,9 @@ public class BattleSystem : MonoBehaviour
         Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move player 1 unit backward
 
         float elapsedTime = 0f;
-        float moveDuration = 0.4f;  // Duration for the movement
+        float moveDuration = 0.4f;  // Duration for the player's backward movement
         dialogueText.text = "Player is defending!";
+
         // Smoothly move the player backward
         while (elapsedTime < moveDuration)
         {
@@ -474,11 +512,13 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-       
         playerUnit.isDefending = true;  // Defense is activated here
 
-        defendCount++;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
+
+        // Enemy moves directly toward the player in response to the defend action
+        StartCoroutine(EnemyMoveTowardPlayer());
+
         // End the player's turn and switch to enemy turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
@@ -489,7 +529,7 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-        // After the enemy's attack, return the player to the original position
+        // After the enemy's action, return the player to the original position
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
         {
@@ -498,9 +538,12 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-        // Turn off defending after the enemy's attack
+        // Turn off defending after the enemy's action
         playerUnit.isDefending = false;
     }
+
+
+
 
 
     IEnumerator FleeBattle()
@@ -567,7 +610,7 @@ public class BattleSystem : MonoBehaviour
         anim = enemyGO.GetComponent<Animator>();
 
         dialogueText.text = "A new enemy " + enemyUnit.unitName + " appears!";
-        
+
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
         yield return new WaitForSeconds(2f);
@@ -575,6 +618,100 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
+    IEnumerator EnemySpecialAttack()
+    {
+        dialogueText.text = enemyUnit.unitName + " is charging a powerful attack!";
+        int specialDamage = enemyUnit.damage * 3;  // Stronger special attack damage
+
+        // Move the enemy to a special attack position
+        Vector3 originalPosition = enemyBattleStation.position;
+        Vector3 specialAttackPosition = playerBattleStation.position + new Vector3(1f, 0, 0);  // Enemy gets closer
+
+        float moveDuration = 0.7f;
+        float elapsedTime = 0f;
+
+        // Move the enemy closer for the special attack
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(originalPosition, specialAttackPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Trigger the special attack animation
+        anim.SetTrigger("EnemySpecialAttack");
+
+        yield return new WaitForSeconds(1f);
+
+        // Apply special attack damage to the player
+        bool isDead = playerUnit.TakeDamage(specialDamage);
+        playerHUD.SetHP(playerUnit.decrementHealth);
+
+        dialogueText.text = "The enemy deals a massive blow!";
+
+        playerDamageText.text = "-" + specialDamage.ToString() + " HP";
+        yield return new WaitForSeconds(1f);
+        playerDamageText.text = "";
+
+        // Move the enemy back after the special attack
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(specialAttackPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Check if the player is dead
+        if (isDead)
+        {
+            state = BattleState.LOST;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            state = BattleState.PLAYERTURN;
+            PlayerTurn();
+        }
+    }
+
+    IEnumerator EnemyMoveTowardPlayer()
+    {
+        dialogueText.text = enemyUnit.unitName + " is moving toward you!";
+
+        // Move the enemy directly toward the player
+        Vector3 originalPosition = enemyBattleStation.position;
+        Vector3 moveToPosition = playerBattleStation.position + new Vector3(2f, 0, 0);  // Enemy moves directly in front of the player
+
+        float moveDuration = 0.5f;  // Time it takes for the enemy to move forward
+        float elapsedTime = 0f;
+
+        // Move the enemy straight toward the player
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(originalPosition, moveToPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Pause briefly after reaching the player
+        yield return new WaitForSeconds(1f);
+
+        // Move the enemy back to its original position
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(moveToPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        dialogueText.text = "Enemy returned to its position.";
+    }
+
+
+
+
 
 
 
