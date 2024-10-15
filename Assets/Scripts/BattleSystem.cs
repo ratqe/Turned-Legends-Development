@@ -35,17 +35,17 @@ public class BattleSystem : MonoBehaviour
     private int attackCount = 0;  // Counter to track the number of attacks
     private int defendCount = 0;
 
-    private bool buttonAction = false; 
+    private bool buttonAction = false;
 
     private Vector3 playerSpawnPosition;
     [SerializeField]
     private string battleScene = "Battle 1";
 
-    public GameObject endBattlePanel; 
+    public GameObject endBattlePanel;
 
     // Array of random gameplay tips
     private string[] tips = {
-        
+
         "Tips: Remember to heal when you're low on health!",
         "Tips: Defending reduces incoming damage significantly.",
         "Tips: Use strong attacks to finish off weakened enemies.",
@@ -371,18 +371,18 @@ public class BattleSystem : MonoBehaviour
     }
 
 
-	IEnumerator PlayerHeal()
-	{
-		playerUnit.Heal(24);
+    IEnumerator PlayerHeal()
+    {
+        playerUnit.Heal(24);
 
-		playerHUD.SetHP(playerUnit.decrementHealth);
-		dialogueText.text = "Regenerate! Heal for 24 HP!";
+        playerHUD.SetHP(playerUnit.decrementHealth);
+        dialogueText.text = "Regenerate! Heal for 24 HP!";
 
-		yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2f);
 
-		state = BattleState.ENEMYTURN;
-		StartCoroutine(EnemyTurn());
-	}
+        state = BattleState.ENEMYTURN;
+        StartCoroutine(EnemyTurn());
+    }
 
 
 
@@ -423,7 +423,7 @@ public class BattleSystem : MonoBehaviour
 
         // if defended at least twice, allow healing
         StartCoroutine(PlayerHeal());
-        
+
         // Reset the defend count after healing
         defendCount = 0;
         buttonAction = true;
@@ -447,7 +447,7 @@ public class BattleSystem : MonoBehaviour
         buttonAction = true;
     }
 
-    
+
     public void OnDefendButton()
     {
         if (state != BattleState.PLAYERTURN || buttonAction)
@@ -474,7 +474,7 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
-       
+
         playerUnit.isDefending = true;  // Defense is activated here
 
         defendCount++;
@@ -567,7 +567,7 @@ public class BattleSystem : MonoBehaviour
         anim = enemyGO.GetComponent<Animator>();
 
         dialogueText.text = "A new enemy " + enemyUnit.unitName + " appears!";
-        
+
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
         yield return new WaitForSeconds(2f);
