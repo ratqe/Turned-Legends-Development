@@ -788,6 +788,8 @@ RectTransform:
   - {fileID: 1730772681}
   - {fileID: 721911629}
   - {fileID: 95065541}
+  - {fileID: 651615066}
+  - {fileID: 803197889}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1177,7 +1179,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 500, y: -280}
+  m_AnchoredPosition: {x: 351, y: -280}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &651615067
@@ -1928,12 +1930,15 @@ MonoBehaviour:
   tipText: {fileID: 2054799729}
   playerHUD: {fileID: 161537615}
   enemyHUD: {fileID: 1710025460}
-
-  newSong: {fileID: 8300000, guid: 0fb87428b3893934ea0691e13a108575, type: 3}
+  speedUpButton: {fileID: 651615067}
+  newSong: {fileID: 0}
+  detailsButton: {fileID: 803197890}
+  popupPanel: {fileID: 0}
+  popupText: {fileID: 0}
   state: 0
   playerDamageText: {fileID: 857135611}
   enemyDamageText: {fileID: 1730772682}
-  battleScene: Lobby
+  battleScene: Battle 1
   endBattlePanel: {fileID: 95065540}
 --- !u!4 &754815014
 Transform:
@@ -2236,7 +2241,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: details
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2349,7 +2354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 490, y: -290}
+  m_AnchoredPosition: {x: 598, y: -290}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &803197890
@@ -2398,7 +2403,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 754815013}
         m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
-        m_MethodName: ToggleSpeed
+        m_MethodName: ShowDetailsPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3261,7 +3266,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: speed
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
