@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    public Transform player;
+    public Vector3 offset;
     public float followSpeed = 2f;
-    public float yOffset = -1f;
-    public Transform target;
+    public bool isInCombat = false;  // Add this flag
 
-    void Update()
+    void LateUpdate()
     {
-        Vector3 newPos = new Vector3(target.position.x, target.position.y + yOffset, -10f);
-        transform.position = Vector3.Slerp(transform.position, newPos, followSpeed);
+        if (!isInCombat)  // Disable camera follow during combat
+        {
+            Vector3 targetPosition = player.position + offset;
+            transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+        }
     }
 }
+

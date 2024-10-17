@@ -47,8 +47,8 @@ public class BattleSystem : MonoBehaviour
     private bool buttonAction = false;
 
     private Vector3 playerSpawnPosition;
-    [SerializeField]
-    private string battleScene = "Battle 1";
+    //[SerializeField]
+    //private string battleScene = "Battle 1";
 
     public GameObject endBattlePanel;
 
@@ -665,7 +665,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load the Lobby scene
-        SceneManager.LoadScene(battleScene);
+        // SceneManager.LoadScene(battleScene);
 
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -687,7 +687,7 @@ public class BattleSystem : MonoBehaviour
             dialogueText.text = "You were defeated :/";
             yield return new WaitForSeconds(3f);
 
-            SceneManager.LoadScene(battleScene);
+            // SceneManager.LoadScene(battleScene);
             MusicManager musicManager = FindObjectOfType<MusicManager>();
             if (musicManager != null)
             {
