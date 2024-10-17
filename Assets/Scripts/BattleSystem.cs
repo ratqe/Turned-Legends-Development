@@ -24,6 +24,12 @@ public class BattleSystem : MonoBehaviour
     public BattleHUD enemyHUD;
     public Button speedUpButton;
     public AudioClip newSong;
+    public Button detailsButton;  // Reference to the Details button
+    public GameObject popupPanel; // Reference to the Panel acting as a popup
+    public TextMeshProUGUI popupText;  // The Text component in the popup panel (if using TextMeshPro)
+
+
+
 
 
 
@@ -71,6 +77,8 @@ public class BattleSystem : MonoBehaviour
         }
         hasAttacked = false;  // Reset the flag at the start of the battle
         speedUpButton.onClick.AddListener(ToggleSpeed);
+
+
 
 
     IEnumerator SetupBattle()
@@ -277,6 +285,7 @@ public class BattleSystem : MonoBehaviour
         Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
 
         float returnMoveDuration = 0.5f;
+
         elapsedTime = 0f;
         while (elapsedTime < returnMoveDuration)
         {
@@ -458,10 +467,6 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        state = BattleState.ENEMYTURN;
-        StartCoroutine(EnemyTurn());
-    }
-
 
 
 
@@ -555,7 +560,6 @@ public class BattleSystem : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
 
 
         playerUnit.isDefending = true;  // Defense is activated here
