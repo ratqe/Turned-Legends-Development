@@ -24,6 +24,12 @@ public class BattleSystem : MonoBehaviour
     public BattleHUD enemyHUD;
     public Button speedUpButton;
     public AudioClip newSong;
+    public Button detailsButton;  // Reference to the Details button
+    public GameObject popupPanel; // Reference to the Panel acting as a popup
+    public TextMeshProUGUI popupText;  // The Text component in the popup panel (if using TextMeshPro)
+
+
+
 
 
 
@@ -38,7 +44,7 @@ public class BattleSystem : MonoBehaviour
     private int defendCount = 0;
     private int enemyAttackCount = 0;
     private bool isSpeedUp = false;
-    
+
 
     private bool buttonAction = false;
 
@@ -71,25 +77,8 @@ public class BattleSystem : MonoBehaviour
         }
         hasAttacked = false;  // Reset the flag at the start of the battle
         speedUpButton.onClick.AddListener(ToggleSpeed);
-    }
 
-    public void ToggleSpeed()
-    {
-        
 
-        if (!isSpeedUp)
-        {
-            Time.timeScale = 5f;
-            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";  // Update button text
-        }
-        else
-        {
-            Time.timeScale = 1f;
-            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Speed Up";  // Update button text
-        }
-
-        isSpeedUp = !isSpeedUp;  // Toggle the speed flag
-    }
 
 
     IEnumerator SetupBattle()
@@ -296,6 +285,7 @@ public class BattleSystem : MonoBehaviour
         Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
 
         float returnMoveDuration = 0.5f;
+
         elapsedTime = 0f;
         while (elapsedTime < returnMoveDuration)
         {
@@ -330,30 +320,6 @@ public class BattleSystem : MonoBehaviour
         float elapsedTime = 0f;
 
         // Move the enemy closer for the special attack
-        while (elapsedTime < moveDuration)
-        {
-            enemyBattleStation.position = Vector3.Lerp(originalPosition, specialAttackPosition, (elapsedTime / moveDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // Trigger the special attack animation
-        anim.SetTrigger("EnemySpecialAttack");
-
-        yield return new WaitForSeconds(1f);
-
-        // Apply special attack damage to the player
-        bool isDead = playerUnit.TakeDamage(specialDamage);
-        playerHUD.SetHP(playerUnit.decrementHealth);
-
-        dialogueText.text = "The enemy deals a massive blow!";
-
-        playerDamageText.text = "-" + specialDamage.ToString() + " HP";
-        yield return new WaitForSeconds(1f);
-        playerDamageText.text = "";
-
-        // Move the enemy back after the special attack
-        elapsedTime = 0f;
         while (elapsedTime < moveDuration)
         {
             enemyBattleStation.position = Vector3.Lerp(specialAttackPosition, originalPosition, (elapsedTime / moveDuration));
@@ -501,9 +467,6 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        state = BattleState.ENEMYTURN;
-        StartCoroutine(EnemyTurn());
-    }
 
 
 
@@ -582,11 +545,14 @@ public class BattleSystem : MonoBehaviour
     IEnumerator PlayerDefend()
     {
         Vector3 originalPosition = playerBattleStation.position;
-        Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move player 1 unit backward
+
+        // Move only 1 unit straight backward
+        Vector3 defendPosition = originalPosition - new Vector3(1.0f, 0, 0);  // Move 1 unit backward
 
         float elapsedTime = 0f;
         float moveDuration = 0.4f;  // Duration for the movement
         dialogueText.text = "Player is defending!";
+
         // Smoothly move the player backward
         while (elapsedTime < moveDuration)
         {
@@ -597,9 +563,9 @@ public class BattleSystem : MonoBehaviour
 
 
         playerUnit.isDefending = true;  // Defense is activated here
-
         defendCount++;
         yield return new WaitForSeconds(2f);
+
         // End the player's turn and switch to enemy turn
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
