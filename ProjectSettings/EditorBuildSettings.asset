@@ -35,4 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Generator.unity
     guid: fcd22bf9667b837448dadf0228dfc17b
+  - enabled: 1
+    path: Assets/Scenes/Selection.unity
+    guid: 9ff433c4ab156e046a336145c6d1e133
   m_configObjects: {}
