@@ -5,62 +5,72 @@ using UnityEngine.UI;
 
 public class LevelLoader : MonoBehaviour
 {
-    public GameObject loadingScreen;  // Reference to the loading screen GameObject
-    public Slider progressBar;        // Reference to a UI Slider for progress
-    public float minimumLoadingTime = 2f; // Minimum time (in seconds) the loading screen is shown
+    // Reference to the loading screen
+    public GameObject loadingScreen;
 
+    // Reference to the slider
+    public Slider progressBar;
+
+    // Minimum time the loading screen shows
+    public float minimumLoadingTime = 2f;
+
+    // Method to initiate the level loading process
     public void LoadLevel(int sceneIndex)
     {
-        // Start the asynchronous loading process
+        // Starting the asynchronous scene 
         StartCoroutine(LoadAsynchronously(sceneIndex));
     }
 
+    // Coroutine to handles asynchronous loading of a scene
     IEnumerator LoadAsynchronously(int sceneIndex)
     {
-        // Show the loading screen
+        // make the loading screen visible
         if (loadingScreen != null)
         {
             loadingScreen.SetActive(true);
         }
 
-        // Start loading the scene asynchronously
+        // Start the loading of the scene, but dont show it yet
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
-        operation.allowSceneActivation = false; // Prevent scene activation until we're ready
+        operation.allowSceneActivation = false;
 
-        float startTime = Time.time; // Record the start time of loading
-        float simulatedProgress = 0f; // Initial simulated progress
+        // Storing the starting time of the loading process
+        float startTime = Time.time;
 
+        // Progress simulated based on the minimum loading time
+        float simulatedProgress = 0f;
+
+        // While loop to loop until the scene is done loading
         while (!operation.isDone)
         {
-            // Simulate the progress bar filling over the `minimumLoadingTime`
+            // Calculate elasped time since the loading started
             float elapsedTime = Time.time - startTime;
-            simulatedProgress = Mathf.Clamp01(elapsedTime / minimumLoadingTime); // Fill over time
 
-            // The actual loading progress goes from 0.0 to 0.9, so we can combine it with simulated progress
+            // Simulate progress using the elapsed time and minimum time
+            simulatedProgress = Mathf.Clamp01(elapsedTime / minimumLoadingTime);
+
+            // The real progress of the operation
             float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
-            
-            // The progress bar will reflect whichever is lower: the simulated progress or the real progress
+
+            // Chooses the lower of the simulated and real progress to display
             float displayProgress = Mathf.Min(simulatedProgress, realProgress);
 
-            // Update the progress bar
+            // If the progress bar exists, update it
             if (progressBar != null)
             {
                 progressBar.value = displayProgress;
             }
 
-            // Debugging: log the progress
-            Debug.Log("Display progress: " + displayProgress);
-
-            // Once the scene is loaded (progress >= 0.9) and the minimum time has passed, allow activation
+            // if the scene is ready and the minimum time has passed, show the loaded scene
             if (operation.progress >= 0.9f && elapsedTime >= minimumLoadingTime)
             {
                 operation.allowSceneActivation = true;
             }
 
-            yield return null; // Wait for the next frame
+            yield return null;
         }
-
-        // Hide the loading screen after the scene is fully loaded
+        
+        // when the scene is loaded, hide the loading screen
         if (loadingScreen != null)
         {
             loadingScreen.SetActive(false);
