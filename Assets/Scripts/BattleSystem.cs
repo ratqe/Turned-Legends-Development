@@ -24,6 +24,10 @@ public class BattleSystem : MonoBehaviour
     public BattleHUD enemyHUD;
     public Button speedUpButton;
     public AudioClip newSong;
+    public Button detailsButton;  // Reference to the Details button
+    public GameObject popupPanel; // Reference to the Panel acting as a popup
+    public TextMeshProUGUI popupText;  // The Text component in the popup panel (if using TextMeshPro)
+
 
 
 
@@ -71,7 +75,19 @@ public class BattleSystem : MonoBehaviour
         }
         hasAttacked = false;  // Reset the flag at the start of the battle
         speedUpButton.onClick.AddListener(ToggleSpeed);
+        detailsButton.onClick.AddListener(ShowDetailsPopup);
     }
+    public void ShowDetailsPopup()
+    {
+        popupText.text = "Hello";  // Set the text in the popup
+        popupPanel.SetActive(true); // Show the popup panel
+    }
+    public void HidePopup()
+    {
+        popupPanel.SetActive(false); // Hide the popup panel
+    }
+
+
 
     public void ToggleSpeed()
     {
