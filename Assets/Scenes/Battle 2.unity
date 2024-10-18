@@ -582,7 +582,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -69
-  m_Sprite: {fileID: 21300000, guid: 6cfdc707bbbd8c449810ebb902480533, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8c2dab3d9ebdc3e44bf0672fd9bd5aa1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1611,8 +1611,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6ae85157213c134489050a067b537fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 4021111439873543613, guid: 815c1de6dfcd6844e8d9360b3708daa1, type: 3}
-  enemyPrefab: {fileID: 6489588277039800768, guid: d2c86085afe03b74cb6d8d006c722da1, type: 3}
+  enemyPrefab: {fileID: 6489588277039800768, guid: 336b3a3d06c847445acf851af301545c, type: 3}
   playerBattleStation: {fileID: 1049972753}
   enemyBattleStation: {fileID: 1488597921}
   dialogueText: {fileID: 344498146}

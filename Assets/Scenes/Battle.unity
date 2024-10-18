@@ -1226,8 +1226,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: ToggleSpeed
         m_Mode: 1
         m_Arguments:
@@ -1901,7 +1901,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 754815014}
-  - component: {fileID: 754815013}
+  - component: {fileID: 754815016}
   - component: {fileID: 754815015}
   m_Layer: 0
   m_Name: BattleSystem
@@ -1910,37 +1910,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &754815013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754815012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb23adcc6463a2a4dae8d03980bce5f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 0}
-  enemyPrefab: {fileID: 6489588277039800768, guid: d2c86085afe03b74cb6d8d006c722da1, type: 3}
-  playerBattleStation: {fileID: 1049972753}
-  enemyBattleStation: {fileID: 1488597921}
-  dialogueText: {fileID: 344498146}
-  tipText: {fileID: 2054799729}
-  playerHUD: {fileID: 161537615}
-  enemyHUD: {fileID: 1710025460}
-  speedUpButton: {fileID: 651615067}
-  newSong: {fileID: 0}
-  detailsButton: {fileID: 803197890}
-  popupPanel: {fileID: 0}
-  popupText: {fileID: 0}
-  state: 0
-  playerDamageText: {fileID: 857135611}
-  enemyDamageText: {fileID: 1730772682}
-  battleScene: Battle 1
-  endBattlePanel: {fileID: 95065540}
-  characterPrefabs: []
 --- !u!4 &754815014
 Transform:
   m_ObjectHideFlags: 0
@@ -1977,6 +1946,35 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &754815016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754815012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe38c3858f674444919a7a3b5d2fbc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 6489588277039800768, guid: d2c86085afe03b74cb6d8d006c722da1, type: 3}
+  playerBattleStation: {fileID: 1049972753}
+  enemyBattleStation: {fileID: 1488597921}
+  dialogueText: {fileID: 344498146}
+  tipText: {fileID: 2054799729}
+  playerHUD: {fileID: 161537615}
+  enemyHUD: {fileID: 1710025460}
+  speedUpButton: {fileID: 651615067}
+  newSong: {fileID: 8300000, guid: 0fb87428b3893934ea0691e13a108575, type: 3}
+  detailsButton: {fileID: 803197890}
+  popupPanel: {fileID: 0}
+  popupText: {fileID: 0}
+  state: 0
+  playerDamageText: {fileID: 857135611}
+  enemyDamageText: {fileID: 1730772682}
+  battleScene: Battle 1
+  endBattlePanel: {fileID: 95065540}
 --- !u!1 &786471415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2135,8 +2133,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: ContinueButton
         m_Mode: 1
         m_Arguments:
@@ -2402,8 +2400,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: ShowDetailsPopup
         m_Mode: 1
         m_Arguments:
@@ -2535,8 +2533,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: OnFleeButton
         m_Mode: 1
         m_Arguments:
@@ -3956,8 +3954,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: OnAttackButton
         m_Mode: 1
         m_Arguments:
@@ -4382,8 +4380,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: ExitButton
         m_Mode: 1
         m_Arguments:
@@ -4590,8 +4588,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: OnDefendButton
         m_Mode: 1
         m_Arguments:
@@ -5681,8 +5679,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 754815013}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+      - m_Target: {fileID: 754815016}
+        m_TargetAssemblyTypeName: BattleSystem2, Assembly-CSharp
         m_MethodName: OnHealButton
         m_Mode: 1
         m_Arguments:

@@ -5,9 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro; // Import TextMeshPro for UI
 
-public enum BattleState1 { START, PLAYERTURN, ENEMYTURN, WON, LOST }
+public enum BattleState2 { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
-public class BattleSystem1 : MonoBehaviour
+public class BattleSystem2 : MonoBehaviour
 {
     
     public GameObject enemyPrefab;
@@ -31,7 +31,7 @@ public class BattleSystem1 : MonoBehaviour
 
 
 
-    public BattleState1 state;
+    public BattleState2 state;
 
     private Animator anim;
     private Animator playerAnim;
@@ -48,9 +48,9 @@ public class BattleSystem1 : MonoBehaviour
 
     private Vector3 playerSpawnPosition;
     [SerializeField]
-    private string battleScene = "Battle 1";
 
-   
+    public GameObject endBattlePanel;
+
     // Array of random gameplay tips
     private string[] tips = {
 
@@ -65,7 +65,7 @@ public class BattleSystem1 : MonoBehaviour
 
     void Start()
     {
-        state = BattleState1.START;
+        state = BattleState2.START;
         StartCoroutine(SetupBattle());
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -110,7 +110,7 @@ public class BattleSystem1 : MonoBehaviour
     IEnumerator SetupBattle()
     {
         
-        GameObject playerGO = Instantiate(CharacterSelection1.selectedPlayer, playerBattleStation);
+        GameObject playerGO = Instantiate(CharacterSelection.selectedPlayer, playerBattleStation);
         playerUnit = playerGO.GetComponent<Unit>(); 
 
         GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
@@ -125,7 +125,7 @@ public class BattleSystem1 : MonoBehaviour
         enemyHUD.SetHUD(enemyUnit);
         yield return new WaitForSeconds(2f);
 
-        state = BattleState1.PLAYERTURN;
+        state = BattleState2.PLAYERTURN;
         PlayerTurn();
     }
 
@@ -220,12 +220,12 @@ public class BattleSystem1 : MonoBehaviour
 
         if (isDead)
         {
-            state = BattleState1.WON;
+            state = BattleState2.WON;
             StartCoroutine(EndBattle());
         }
         else
         {
-            state = BattleState1.ENEMYTURN;
+            state = BattleState2.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
     }
@@ -322,12 +322,12 @@ public class BattleSystem1 : MonoBehaviour
         // Check if the player is dead
         if (isDead)
         {
-            state = BattleState1.LOST;
+            state = BattleState2.LOST;
             StartCoroutine(EndBattle());
         }
         else
         {
-            state = BattleState1.PLAYERTURN;
+            state = BattleState2.PLAYERTURN;
             PlayerTurn();
         }
     }
@@ -379,12 +379,12 @@ public class BattleSystem1 : MonoBehaviour
         // Check if the player is dead
         if (isDead)
         {
-            state = BattleState1.LOST;
+            state = BattleState2.LOST;
             StartCoroutine(EndBattle());
         }
         else
         {
-            state = BattleState1.PLAYERTURN;
+            state = BattleState2.PLAYERTURN;
             PlayerTurn();
         }
     }
@@ -496,12 +496,12 @@ public class BattleSystem1 : MonoBehaviour
 
         if (isDead)
         {
-            state = BattleState1.WON;
+            state = BattleState2.WON;
             StartCoroutine(EndBattle());
         }
         else
         {
-            state = BattleState1.ENEMYTURN;
+            state = BattleState2.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
     }
@@ -516,7 +516,7 @@ public class BattleSystem1 : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        state = BattleState1.ENEMYTURN;
+        state = BattleState2.ENEMYTURN;
         StartCoroutine(EnemyTurn());
     }
 
@@ -526,7 +526,7 @@ public class BattleSystem1 : MonoBehaviour
 
     public void OnAttackButton()
     {
-        if (state != BattleState1.PLAYERTURN || buttonAction)
+        if (state != BattleState2.PLAYERTURN || buttonAction)
             return;
 
         attackCount++;  // Increment the attack counter
@@ -547,7 +547,7 @@ public class BattleSystem1 : MonoBehaviour
 
     public void OnHealButton()
     {
-        if (state != BattleState1.PLAYERTURN || buttonAction)
+        if (state != BattleState2.PLAYERTURN || buttonAction)
         {
             return;
         }
@@ -570,7 +570,7 @@ public class BattleSystem1 : MonoBehaviour
 
     public void OnFleeButton()
     {
-        if (state != BattleState1.PLAYERTURN || buttonAction)
+        if (state != BattleState2.PLAYERTURN || buttonAction)
             return;
 
         if (hasAttacked)
@@ -588,7 +588,7 @@ public class BattleSystem1 : MonoBehaviour
 
     public void OnDefendButton()
     {
-        if (state != BattleState1.PLAYERTURN || buttonAction)
+        if (state != BattleState2.PLAYERTURN || buttonAction)
             return;
 
         StartCoroutine(PlayerDefend());
@@ -620,11 +620,11 @@ public class BattleSystem1 : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         // End the player's turn and switch to enemy turn
-        state = BattleState1.ENEMYTURN;
+        state = BattleState2.ENEMYTURN;
         StartCoroutine(EnemyTurn());
 
         // Wait for the enemy turn to finish before moving back
-        while (state == BattleState1.ENEMYTURN)
+        while (state == BattleState2.ENEMYTURN)
         {
             yield return null;
         }
@@ -675,18 +675,15 @@ public class BattleSystem1 : MonoBehaviour
 
     IEnumerator EndBattle()
     {
-        if (state == BattleState1.WON)
+        if (state == BattleState2.WON)
         {
             dialogueText.text = "You won the battle congrats!!!!";
             // Displaying options for continuing the battle or exiting
-            
+            EndBattleOptions();
         }
-        else if (state == BattleState1.LOST)
+        else if (state == BattleState2.LOST)
         {
             dialogueText.text = "You were defeated :/";
-
-        }
-
             yield return new WaitForSeconds(3f);
 
             SceneManager.LoadScene(6);
@@ -695,8 +692,47 @@ public class BattleSystem1 : MonoBehaviour
             {
                 musicManager.RevertToOriginalSong();
             }
+        }
+
+
     }
 
+    IEnumerator SetupNewBattle()
+    {
+        Destroy(enemyBattleStation.GetChild(0).gameObject); // Remove the defeated enemy
+
+        GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
+        enemyUnit = enemyGO.GetComponent<Unit>();
+
+        anim = enemyGO.GetComponent<Animator>();
+
+        dialogueText.text = "A new enemy " + enemyUnit.unitName + " appears!";
+
+        playerHUD.SetHUD(playerUnit);
+        enemyHUD.SetHUD(enemyUnit);
+        yield return new WaitForSeconds(2f);
+
+        state = BattleState2.PLAYERTURN;
+        PlayerTurn();
+    }
+
+
+
+    void EndBattleOptions()
+    {
+        endBattlePanel.SetActive(true); // Show the panel when the battle ends
+    }
+
+    public void ContinueButton()
+    {
+        endBattlePanel.SetActive(false); // Hide the panel
+        StartCoroutine(SetupNewBattle()); // starts a new battle 
+    }
+
+    public void ExitButton()
+    {
+        SceneManager.LoadScene(6); // Load back to lobby
+    }
 
 
 
