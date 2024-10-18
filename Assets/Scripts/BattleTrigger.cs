@@ -9,6 +9,7 @@ public class BattleTrigger : MonoBehaviour
 
     private Vector3 playerPositionBeforeBattle;
     private PlayerControl playerControl; // To store player movement script
+    private bool isInCombat = false; // State management for combat
 
     public CameraFollow cameraFollow;  // Drag the CameraFollow script here
 
@@ -33,9 +34,9 @@ public class BattleTrigger : MonoBehaviour
         // Save player's position before battle
         playerPositionBeforeBattle = player.transform.position;
 
-        // Move player and enemy to battle positions
-        player.transform.position = playerBattlePosition.position;  // Move player to left
-        enemy.transform.position = enemyBattlePosition.position;    // Move enemy to right
+        if (isInCombat) return; // Prevent starting combat if already in combat
+
+        isInCombat = true; // Set combat state to true
 
         // Other battle initialization code
         cameraFollow.isInCombat = true;  // Stop following the player
@@ -49,8 +50,7 @@ public class BattleTrigger : MonoBehaviour
         // Disable the player's movement during combat
         playerControl.enabled = false;
 
-        // Set up battle positions and other battle-related logic
-        AlignBattleUI();
+        
 
         // Optionally, start battle logic here (e.g., turn-based system)
         Debug.Log("Combat started!");
@@ -62,16 +62,13 @@ public class BattleTrigger : MonoBehaviour
         transitionManager.StartBattleTransition();
     }
 
-    void AlignBattleUI()
-    {
-        // Move the player and enemy to their battle positions
-        player.transform.position = playerBattlePosition.position;
-        enemy.transform.position = enemyBattlePosition.position;
-    }
+    
 
     // Call this function when the combat is over to return to the dungeon
     public void EndCombat()
     {
+        if (!isInCombat) return; // Prevent ending combat if not in combat
+
         // Reset player and enemy positions (if necessary)
         enemy.SetActive(false);  // Disable the enemy after defeat
 
