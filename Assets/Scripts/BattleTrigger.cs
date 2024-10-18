@@ -25,15 +25,7 @@ public class BattleTrigger : MonoBehaviour
         battleUI.SetActive(false);  // Battle UI should be hidden initially
     }
 
-    // This method will trigger when the player enters the enemy's trigger zone
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // Check if the collider that entered the trigger belongs to the player
-        if (other.CompareTag("Player"))
-        {
-            StartCombat();  // Start the combat when player touches the enemy
-        }
-    }
+    
 
     // This function starts combat by switching UI elements
     public void StartCombat()
