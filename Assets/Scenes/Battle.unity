@@ -2019,16 +2019,16 @@ MonoBehaviour:
   tipText: {fileID: 2054799729}
   playerHUD: {fileID: 161537615}
   enemyHUD: {fileID: 1710025460}
-  speedUpButton: {fileID: 0}
+  speedUpButton: {fileID: 651615067}
   newSong: {fileID: 0}
-  detailsButton: {fileID: 0}
+  detailsButton: {fileID: 803197890}
   popupPanel: {fileID: 0}
   popupText: {fileID: 0}
   state: 0
-  playerDamageText: {fileID: 0}
-  enemyDamageText: {fileID: 0}
+  playerDamageText: {fileID: 857135611}
+  enemyDamageText: {fileID: 1730772682}
   battleScene: Battle 1
-  endBattlePanel: {fileID: 0}
+  endBattlePanel: {fileID: 95065540}
 --- !u!4 &754815014
 Transform:
   m_ObjectHideFlags: 0
