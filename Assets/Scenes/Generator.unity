@@ -2818,7 +2818,7 @@ Transform:
   m_GameObject: {fileID: 621183450}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -957.0153, y: -535.1414, z: 8.47}
+  m_LocalPosition: {x: -955.51, y: -537.23, z: 8.47}
   m_LocalScale: {x: 1.2587135, y: 1.4117273, z: 0.6819}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3182,8 +3182,8 @@ Transform:
   m_GameObject: {fileID: 720968026}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -949.8825, y: -536.98, z: 8.47}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalPosition: {x: -945.05, y: -539.87, z: 8.47}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2103275551}
@@ -3916,9 +3916,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40b2eccf8f2fe2045a68db203288f7ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1976564430}
+  offset: {x: 0, y: -1, z: -10}
   followSpeed: 2
-  yOffset: -1
-  target: {fileID: 1976564430}
+  isInCombat: 0
 --- !u!1 &884931527
 GameObject:
   m_ObjectHideFlags: 0
@@ -4087,6 +4088,7 @@ GameObject:
   - component: {fileID: 907740548}
   - component: {fileID: 907740547}
   - component: {fileID: 907740551}
+  - component: {fileID: 907740552}
   m_Layer: 5
   m_Name: DunegonUI
   m_TagString: Untagged
@@ -4195,6 +4197,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 403068567}
   isPaused: 0
+--- !u!114 &907740552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907740546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0b72eaa3c704348a3b8b8c6af8823f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonUI: {fileID: 907740546}
+  battleUI: {fileID: 1814357249}
+  cameraFollow: {fileID: 862788954}
+  playerBattlePosition: {fileID: 1394464905}
+  enemyBattlePosition: {fileID: 720968027}
+  player: {fileID: 1976564424}
+  enemy: {fileID: 1670228752}
 --- !u!1 &915521615
 GameObject:
   m_ObjectHideFlags: 0
@@ -41478,8 +41499,8 @@ Transform:
   m_GameObject: {fileID: 1394464904}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -959.4325, y: -536.92, z: 8.47}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalPosition: {x: -963.27, y: -539.81, z: 8.47}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2103275551}
@@ -42387,6 +42408,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonUI: {fileID: 907740546}
   battleUI: {fileID: 1814357249}
+  cameraFollow: {fileID: 862788954}
   playerBattlePosition: {fileID: 1394464905}
   enemyBattlePosition: {fileID: 720968027}
   player: {fileID: 1976564424}
@@ -55868,8 +55890,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 862788953}
-  - {fileID: 907740550}
   - {fileID: 334244179}
+  - {fileID: 907740550}
   - {fileID: 2017731795}
   - {fileID: 800145385}
   - {fileID: 1814357254}
