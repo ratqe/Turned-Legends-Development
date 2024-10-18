@@ -64,6 +64,12 @@ public class BattleTrigger : MonoBehaviour
         Debug.Log("Combat started!");
     }
 
+    void OnPlayerEnterBattle()
+    {
+        SceneTransitionManager transitionManager = FindObjectOfType<SceneTransitionManager>();
+        transitionManager.StartBattleTransition();
+    }
+
     void AlignBattleUI()
     {
         // Move the player and enemy to their battle positions
