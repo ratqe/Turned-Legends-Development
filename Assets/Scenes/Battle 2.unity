@@ -1611,7 +1611,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6ae85157213c134489050a067b537fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 6489588277039800768, guid: 336b3a3d06c847445acf851af301545c, type: 3}
+  enemyPrefab: {fileID: 6489588277039800768, guid: 635ac5422715d6c4e8e6dc3cbff0c306, type: 3}
   playerBattleStation: {fileID: 1049972753}
   enemyBattleStation: {fileID: 1488597921}
   dialogueText: {fileID: 344498146}
