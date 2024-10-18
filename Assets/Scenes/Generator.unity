@@ -4833,9 +4833,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65997919}
-        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
-        m_MethodName: ExitButton
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: BattleTrigger, Assembly-CSharp
+        m_MethodName: EndCombat
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -55875,7 +55875,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2129951148}
-  - component: {fileID: 2129951149}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -55898,25 +55897,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2129951149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2129951146}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da0b72eaa3c704348a3b8b8c6af8823f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dungeonUI: {fileID: 907740546}
-  battleUI: {fileID: 1814357249}
-  cameraFollow: {fileID: 862788954}
-  playerBattlePosition: {fileID: 1394464905}
-  enemyBattlePosition: {fileID: 720968027}
-  player: {fileID: 1976564424}
-  enemy: {fileID: 1670228752}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

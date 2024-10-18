@@ -96,6 +96,9 @@ public class BattleTrigger : MonoBehaviour
         // Re-enable the player's movement
         playerControl.enabled = true;
 
+        // Ending the combat
+        EndCombat();
+
         Debug.Log("Combat ended, back to dungeon!");
     }
 }
