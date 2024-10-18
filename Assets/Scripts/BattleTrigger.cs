@@ -36,7 +36,7 @@ public class BattleTrigger : MonoBehaviour
     }
 
     // This function starts combat by switching UI elements
-    private void StartCombat()
+    public void StartCombat()
     {
         // Save player's position before battle
         playerPositionBeforeBattle = player.transform.position;
@@ -96,7 +96,7 @@ public class BattleTrigger : MonoBehaviour
         // Re-enable the player's movement
         playerControl.enabled = true;
 
-        // Ending the combat
+        // Ending the combat 
         EndCombat();
 
         Debug.Log("Combat ended, back to dungeon!");
