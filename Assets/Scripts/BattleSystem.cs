@@ -9,7 +9,7 @@ public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
 
 public class BattleSystem : MonoBehaviour
 {
-    public GameObject playerPrefab;
+    
     public GameObject enemyPrefab;
 
     public Transform playerBattleStation;
@@ -110,8 +110,9 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator SetupBattle()
     {
-        GameObject playerGO = Instantiate(playerPrefab, playerBattleStation);
-        playerUnit = playerGO.GetComponent<Unit>();
+        
+        GameObject playerGO = Instantiate(CharacterSelection.selectedPlayer, playerBattleStation);
+        playerUnit = playerGO.GetComponent<Unit>(); 
 
         GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
         enemyUnit = enemyGO.GetComponent<Unit>();
@@ -121,7 +122,6 @@ public class BattleSystem : MonoBehaviour
         // player original position 
         playerSpawnPosition = playerBattleStation.position;
         dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
-
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
         yield return new WaitForSeconds(2f);
@@ -129,6 +129,7 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
+
 
     void PlayerTurn()
     {
