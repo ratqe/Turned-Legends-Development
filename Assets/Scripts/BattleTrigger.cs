@@ -26,7 +26,7 @@ public class BattleTrigger : MonoBehaviour
         battleUI.SetActive(false);  // Battle UI should be hidden initially
     }
 
-    
+
 
     // This function starts combat by switching UI elements
     public void StartCombat()
@@ -50,7 +50,7 @@ public class BattleTrigger : MonoBehaviour
         // Disable the player's movement during combat
         playerControl.enabled = false;
 
-        
+
 
         // Optionally, start battle logic here (e.g., turn-based system)
         Debug.Log("Combat started!");
@@ -62,7 +62,7 @@ public class BattleTrigger : MonoBehaviour
         transitionManager.StartBattleTransition();
     }
 
-    
+
 
     // Call this function when the combat is over to return to the dungeon
     public void EndCombat()
@@ -91,4 +91,3 @@ public class BattleTrigger : MonoBehaviour
         Debug.Log("Combat ended, back to dungeon!");
     }
 }
-
