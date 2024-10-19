@@ -6,6 +6,7 @@ public class BattleTrigger : MonoBehaviour
 {
     public GameObject dungeonUI; // Reference to your Dungeon UI GameObject
     public GameObject battleUI;  // Reference to your Battle UI GameObject
+    private BattleSystem battleSystem;
 
     private Vector3 playerPositionBeforeBattle;
     private PlayerControl playerControl; // To store player movement script
@@ -23,6 +24,7 @@ public class BattleTrigger : MonoBehaviour
     {
         // Find the player's movement script and ensure battle UI is hidden
         playerControl = player.GetComponent<PlayerControl>();
+        battleSystem = FindObjectOfType<BattleSystem>();
         battleUI.SetActive(false);  // Battle UI should be hidden initially
     }
 
@@ -50,7 +52,10 @@ public class BattleTrigger : MonoBehaviour
         // Disable the player's movement during combat
         playerControl.enabled = false;
 
-
+        if (battleSystem != null)
+        {
+            battleSystem.StartBattleFromTrigger();  // Start BattleSystem
+        }
 
         // Optionally, start battle logic here (e.g., turn-based system)
         Debug.Log("Combat started!");
@@ -63,20 +68,20 @@ public class BattleTrigger : MonoBehaviour
     }
 
 
-
     // Call this function when the combat is over to return to the dungeon
     public void EndCombat()
     {
         if (!isInCombat) return; // Prevent ending combat if not in combat
 
-        // Reset player and enemy positions (if necessary)
-        enemy.SetActive(false);  // Disable the enemy after defeat
+        // Reset enemy (if needed)
+        enemy.SetActive(false); // Disable the enemy after defeat
 
         // Re-enable camera follow
-        cameraFollow.isInCombat = false;  // Resume camera follow
+        cameraFollow.isInCombat = false; // Resume camera follow
 
         // Disable the battle UI and bring back the dungeon elements
         battleUI.SetActive(false);
+        
         dungeonUI.SetActive(true);
 
         // Restore the player's position
@@ -85,9 +90,24 @@ public class BattleTrigger : MonoBehaviour
         // Re-enable the player's movement
         playerControl.enabled = true;
 
-        // Ending the combat 
-        EndCombat();
+        isInCombat = false; // Reset combat state to allow future battles
 
         Debug.Log("Combat ended, back to dungeon!");
+
+        // Delay to allow UI to update before re-enabling the trigger
+        StartCoroutine(ResetTriggerAfterDelay(1f)); // 1 second delay
     }
+
+    // Coroutine to reset the enemy trigger
+    private IEnumerator ResetTriggerAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        EnemyTrigger enemyTrigger = FindObjectOfType<EnemyTrigger>();
+        if (enemyTrigger != null)
+        {
+            enemyTrigger.ResetTrigger(); // Re-enable enemy trigger
+        }
+    }
+
+
 }

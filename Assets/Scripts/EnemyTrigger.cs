@@ -5,44 +5,31 @@ using UnityEngine.SceneManagement;
 
 public class EnemyTrigger : MonoBehaviour
 {
-    
-
     private BattleTrigger battleTrigger; // Reference to the BattleTrigger script
+    private bool isTriggerActive = true; // Control whether the trigger is active
 
     private void Start()
     {
-        // Find the BattleTrigger component in the scene
         battleTrigger = FindObjectOfType<BattleTrigger>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Check if the collider that entered the trigger belongs to the player
-        if (other.CompareTag("Player"))
+        // Check if the collider that entered the trigger belongs to the player and trigger is active
+        if (isTriggerActive && other.CompareTag("Player"))
         {
+            Debug.Log("Player entered the enemy trigger.");
             if (battleTrigger != null)
             {
                 battleTrigger.StartCombat(); // Notify BattleTrigger to start combat
+                isTriggerActive = false; // Disable the trigger immediately
             }
         }
     }
 
-    /*private void OnTriggerEnter2D(Collider2D collision)
+    // Method to reset trigger state
+    public void ResetTrigger()
     {
-        if (collision.CompareTag("Player"))
-        {
-            SceneManager.LoadScene(battleScene);
-            //DestroyPlayerOnSceneLoad();
-        }
-    }*/
-
-    /*void DestroyPlayerOnSceneLoad()
-    {
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
-        {
-            Destroy(player);
-        }
-    }*/
-
+        isTriggerActive = true; // Enable the trigger again
+    }
 }

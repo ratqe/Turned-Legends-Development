@@ -547,7 +547,6 @@ MonoBehaviour:
   state: 0
   playerDamageText: {fileID: 1098421586}
   enemyDamageText: {fileID: 598309816}
-  endBattlePanel: {fileID: 842015866}
 --- !u!1 &66633080
 GameObject:
   m_ObjectHideFlags: 0
@@ -4846,9 +4845,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BattleTrigger, Assembly-CSharp
-        m_MethodName: EndCombat
+      - m_Target: {fileID: 65997919}
+        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+        m_MethodName: ExitButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
