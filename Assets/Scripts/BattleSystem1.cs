@@ -48,7 +48,7 @@ public class BattleSystem1 : MonoBehaviour
 
     private Vector3 playerSpawnPosition;
     [SerializeField]
-    private string battleScene = "Battle 1";
+    
 
    
     // Array of random gameplay tips
