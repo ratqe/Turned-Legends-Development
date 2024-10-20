@@ -1611,7 +1611,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6ae85157213c134489050a067b537fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 6489588277039800768, guid: 336b3a3d06c847445acf851af301545c, type: 3}
+  enemyPrefab: {fileID: 6489588277039800768, guid: 635ac5422715d6c4e8e6dc3cbff0c306, type: 3}
   playerBattleStation: {fileID: 1049972753}
   enemyBattleStation: {fileID: 1488597921}
   dialogueText: {fileID: 344498146}
@@ -1619,14 +1619,19 @@ MonoBehaviour:
   playerHUD: {fileID: 161537615}
   enemyHUD: {fileID: 1710025460}
   speedUpButton: {fileID: 651615067}
-  newSong: {fileID: 0}
+  newSong: {fileID: 8300000, guid: 0fb87428b3893934ea0691e13a108575, type: 3}
   detailsButton: {fileID: 803197890}
   popupPanel: {fileID: 0}
   popupText: {fileID: 0}
   state: 0
   playerDamageText: {fileID: 857135611}
   enemyDamageText: {fileID: 1730772682}
-  battleScene: 
+  tips:
+  - 'Tips: Remember to heal when you''re low on health!'
+  - 'Tips: Defending reduces incoming damage significantly.'
+  - 'Tips: Use strong attacks to finish off weakened enemies.'
+  - 'Tips: Switch up your tactics to outsmart your enemies!'
+  - 'Tips: Pay attention to enemy attack patterns!'
 --- !u!1 &786471415
 GameObject:
   m_ObjectHideFlags: 0

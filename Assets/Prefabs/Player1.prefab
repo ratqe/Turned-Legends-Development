@@ -48,10 +48,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Timtam
   unitLevel: 6
-  damage: 20
-  getHealth: 30
-  decrementHealth: 30
-  maxHealth: 0
+  damage: 25
+  specialDamage: 40
+  getHealth: 85
+  decrementHealth: 85
+  defensePercentage: 0.3
+  healingRate: 50
   isDefending: 0
 --- !u!212 &5626499423768275182
 SpriteRenderer:

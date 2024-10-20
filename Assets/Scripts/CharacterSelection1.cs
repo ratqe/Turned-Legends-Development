@@ -7,6 +7,7 @@ public class CharacterSelection1 : MonoBehaviour
     public GameObject player1Prefab;
     public GameObject player2Prefab;
     public GameObject player3Prefab;
+    public GameObject player4Prefab;
     public static GameObject selectedPlayer; 
 
     public void SelectPlayer1()
@@ -24,6 +25,12 @@ public class CharacterSelection1 : MonoBehaviour
     public void SelectPlayer3()
     {
         selectedPlayer = player3Prefab;
+        StartBattle();
+    }
+
+    public void SelectPlayer4()
+    {
+        selectedPlayer = player4Prefab;
         StartBattle();
     }
 

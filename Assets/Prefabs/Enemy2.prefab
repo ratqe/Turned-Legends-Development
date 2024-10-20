@@ -47,11 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitName: Taran
-  unitLevel: 5
-  damage: 7
-  getHealth: 50
-  decrementHealth: 50
-  maxHealth: 0
+  unitLevel: 999
+  damage: 20
+  specialDamage: 40
+  getHealth: 120
+  decrementHealth: 120
+  defensePercentage: 0
+  healingRate: 0
   isDefending: 0
 --- !u!212 &4432869342505283888
 SpriteRenderer:
