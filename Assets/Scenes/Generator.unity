@@ -539,15 +539,14 @@ MonoBehaviour:
   tipText: {fileID: 1316788474}
   playerHUD: {fileID: 47236994}
   enemyHUD: {fileID: 346231375}
-  speedUpButton: {fileID: 154016786}
   newSong: {fileID: 0}
+  speedUpButton: {fileID: 154016786}
   detailsButton: {fileID: 982449359}
   popupPanel: {fileID: 0}
   popupText: {fileID: 0}
   state: 0
   playerDamageText: {fileID: 1098421586}
   enemyDamageText: {fileID: 598309816}
-  endBattlePanel: {fileID: 842015866}
 --- !u!1 &66633080
 GameObject:
   m_ObjectHideFlags: 0
@@ -4846,9 +4845,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BattleTrigger, Assembly-CSharp
-        m_MethodName: EndCombat
+      - m_Target: {fileID: 65997919}
+        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+        m_MethodName: ExitButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -56015,6 +56014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonUI: {fileID: 907740546}
   battleUI: {fileID: 1814357249}
+  playerPositionBeforeBattle: {x: 0, y: 0, z: 0}
   cameraFollow: {fileID: 862788954}
   playerBattlePosition: {fileID: 1394464905}
   enemyBattlePosition: {fileID: 720968027}
