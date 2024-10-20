@@ -539,8 +539,8 @@ MonoBehaviour:
   tipText: {fileID: 1316788474}
   playerHUD: {fileID: 47236994}
   enemyHUD: {fileID: 346231375}
-  speedUpButton: {fileID: 154016786}
   newSong: {fileID: 0}
+  speedUpButton: {fileID: 154016786}
   detailsButton: {fileID: 982449359}
   popupPanel: {fileID: 0}
   popupText: {fileID: 0}
@@ -56014,6 +56014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonUI: {fileID: 907740546}
   battleUI: {fileID: 1814357249}
+  playerPositionBeforeBattle: {x: 0, y: 0, z: 0}
   cameraFollow: {fileID: 862788954}
   playerBattlePosition: {fileID: 1394464905}
   enemyBattlePosition: {fileID: 720968027}

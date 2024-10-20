@@ -678,6 +678,14 @@ public class BattleSystem : MonoBehaviour
         // Load the Lobby scene
         // SceneManager.LoadScene(battleScene);
 
+        // Reference to the BattleTrigger script to handle the flee action
+        BattleTrigger battleTrigger = FindObjectOfType<BattleTrigger>();
+        if (battleTrigger != null)
+        {
+            battleTrigger.FleeFromBattle();  // Call the FleeFromBattle method
+        }
+
+        // Additional cleanup if needed (like stopping the battle music)
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
@@ -723,7 +731,14 @@ public class BattleSystem : MonoBehaviour
         BattleTrigger battleTrigger = FindObjectOfType<BattleTrigger>();
         if (battleTrigger != null)
         {
-            battleTrigger.EndCombat(); //reset the player position and other UI elements
+            battleTrigger.EndCombat(true); //reset the player position and other UI elements
+        }
+
+        // Return player to original position (before battle started)
+        PlayerControl playerControl = FindObjectOfType<PlayerControl>();
+        if (playerControl != null)
+        {
+            playerControl.transform.position = battleTrigger.playerPositionBeforeBattle; // Restore saved position
         }
 
         // Reset the enemy trigger to allow for new encounters after a short delay

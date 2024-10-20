@@ -8,7 +8,7 @@ public class BattleTrigger : MonoBehaviour
     public GameObject battleUI;  // Reference to your Battle UI GameObject
     private BattleSystem battleSystem;
 
-    private Vector3 playerPositionBeforeBattle;
+    public Vector3 playerPositionBeforeBattle;
     private PlayerControl playerControl; // To store player movement script
     private bool isInCombat = false; // State management for combat
 
@@ -40,6 +40,12 @@ public class BattleTrigger : MonoBehaviour
 
         isInCombat = true; // Set combat state to true
 
+        // Automatically find the nearest enemy if not already assigned
+        if (enemy == null)
+        {
+            enemy = FindNearestEnemy();
+        }
+
         // Other battle initialization code
         cameraFollow.isInCombat = true;  // Stop following the player
 
@@ -61,17 +67,74 @@ public class BattleTrigger : MonoBehaviour
         Debug.Log("Combat started!");
     }
 
+    // Function to find the nearest enemy (you can customize this logic)
+    private GameObject FindNearestEnemy()
+    {
+        float nearestDistance = float.MaxValue;
+        GameObject nearestEnemy = null;
+
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject currentEnemy in enemies)
+        {
+            // Ensure only active enemies are considered
+            if (!currentEnemy.activeSelf) continue;
+
+            float distanceToEnemy = Vector3.Distance(player.transform.position, currentEnemy.transform.position);
+            if (distanceToEnemy < nearestDistance)
+            {
+                nearestEnemy = currentEnemy;
+                nearestDistance = distanceToEnemy;
+            }
+        }
+
+        return nearestEnemy;
+    }
+
     void OnPlayerEnterBattle()
     {
         SceneTransitionManager transitionManager = FindObjectOfType<SceneTransitionManager>();
         transitionManager.StartBattleTransition();
     }
 
+    // Call this when the player flees from battle
+    public void FleeFromBattle()
+    {
+        if (!isInCombat) return;  // Ensure the player is in combat before fleeing
+
+        Debug.Log("Player fled the battle.");
+
+        // Restore player's position in the dungeon before the battle
+        player.transform.position = playerPositionBeforeBattle;
+
+        // Re-enable player movement and controls
+        playerControl.enabled = true;
+
+        // Switch UI back to dungeon UI
+        battleUI.SetActive(false);
+        dungeonUI.SetActive(true);
+
+        // Restore camera follow behavior
+        cameraFollow.isInCombat = false;
+
+        // Reset combat state
+        isInCombat = false;
+
+        Debug.Log("Player returned to the dungeon after fleeing.");
+    }
+
 
     // Call this function when the combat is over to return to the dungeon
-    public void EndCombat()
+    public void EndCombat(bool playerWon)
     {
         if (!isInCombat) return; // Prevent ending combat if not in combat
+
+
+        // Handle the case where the player wins
+        if (playerWon)
+        {
+            // Your existing logic for deactivating the enemy
+            enemy.SetActive(false);
+        }
 
         // Reset enemy (if needed)
         enemy.SetActive(false); // Disable the enemy after defeat
