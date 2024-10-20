@@ -47,11 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitName: Yash
-  unitLevel: 5
-  damage: 5
-  getHealth: 30
-  decrementHealth: 30
-  maxHealth: 0
+  unitLevel: 999
+  damage: 16
+  specialDamage: 35
+  getHealth: 150
+  decrementHealth: 150
+  defensePercentage: 0
+  healingRate: 0
   isDefending: 0
 --- !u!212 &7592755514338126973
 SpriteRenderer:
@@ -94,7 +96,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 516175854, guid: 286e888c7c071b047930dd3085b26e6c, type: 3}
+  m_Sprite: {fileID: 1722800662, guid: 836ba81373ddf664c8a192783efe0ecd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
