@@ -302,7 +302,7 @@ public class BattleSystem : MonoBehaviour
         float finalDamage = damage;
         if (playerUnit.isDefending)
         {
-            finalDamage = (int)(damage * 0.5f);
+            finalDamage = (int)(damage * (1 - playerUnit.defensePercentage));
         }
         playerDamageText.text = "-" + finalDamage.ToString() + " HP";
 
@@ -337,7 +337,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator EnemySpecialAttack()
     {
         dialogueText.text = enemyUnit.unitName + " is charging a powerful attack!";
-        int specialDamage = enemyUnit.damage * 3;  // Stronger special attack damage
+        int specialDamage = enemyUnit.specialDamage;
 
         // Move the enemy to a special attack position
         Vector3 originalPosition = enemyBattleStation.position;
@@ -359,13 +359,20 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        // Calculate final damage base on the player set defense
+        float finalDamage = specialDamage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(specialDamage * (1 - playerUnit.defensePercentage));
+        }
+        
         // Apply special attack damage to the player
-        bool isDead = playerUnit.TakeDamage(specialDamage);
+        bool isDead = playerUnit.TakeDamage((int)finalDamage);
         playerHUD.SetHP(playerUnit.decrementHealth);
 
         dialogueText.text = "The enemy deals a massive blow!";
 
-        playerDamageText.text = "-" + specialDamage.ToString() + " HP";
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 
@@ -400,7 +407,7 @@ public class BattleSystem : MonoBehaviour
     {
         DisplayRandomTip();  // Show a random tip when the special attack starts
 
-        int damage = playerUnit.damage * 3;  // Stronger final blow
+        int specialDamage = playerUnit.specialDamage;
 
         Vector3 originalPosition = playerBattleStation.position;
 
@@ -448,9 +455,9 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // Deal the final blow to the enemy
-        enemyDamageText.text = "-" + damage.ToString() + " HP";
-        bool isDead = enemyUnit.TakeDamage(damage);
+        // Apply special attack damage to the enemy
+        enemyDamageText.text = "-" + specialDamage.ToString() + " HP";
+        bool isDead = enemyUnit.TakeDamage(specialDamage);
         enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "A devastating blow!";
 
@@ -511,10 +518,10 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerHeal()
     {
-        playerUnit.Heal(24);
+        playerUnit.Heal();
 
         playerHUD.SetHP(playerUnit.decrementHealth);
-        dialogueText.text = "Regenerate! Heal for 24 HP!";
+        dialogueText.text = "Regenerate! Heal for " + playerUnit.healingRate;
 
         yield return new WaitForSeconds(2f);
 
@@ -555,9 +562,9 @@ public class BattleSystem : MonoBehaviour
         }
 
         // will check if the player has defended at least twice
-        if (defendCount < 2)
+        if (defendCount < 1)
         {
-            dialogueText.text = "Defend twice first before healing!";
+            dialogueText.text = "Defend once first before healing!";
             return;
         }
 

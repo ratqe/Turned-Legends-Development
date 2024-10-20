@@ -48,10 +48,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Arial
   unitLevel: 6
-  damage: 20
-  getHealth: 30
-  decrementHealth: 30
-  maxHealth: 0
+  damage: 40
+  specialDamage: 30
+  getHealth: 65
+  decrementHealth: 65
+  defensePercentage: 0.5
+  healingRate: 35
   isDefending: 0
 --- !u!212 &5626499423768275182
 SpriteRenderer:
