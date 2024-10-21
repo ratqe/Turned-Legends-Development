@@ -531,8 +531,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb23adcc6463a2a4dae8d03980bce5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 4021111439873543613, guid: 815c1de6dfcd6844e8d9360b3708daa1, type: 3}
-  enemyPrefab: {fileID: 6489588277039800768, guid: 336b3a3d06c847445acf851af301545c, type: 3}
+  playerPrefab: {fileID: 1394464904}
+  enemyPrefab: {fileID: 720968026}
   playerBattleStation: {fileID: 1394464905}
   enemyBattleStation: {fileID: 720968027}
   dialogueText: {fileID: 575969622}
@@ -3166,6 +3166,8 @@ GameObject:
   m_Component:
   - component: {fileID: 720968027}
   - component: {fileID: 720968028}
+  - component: {fileID: 720968030}
+  - component: {fileID: 720968029}
   m_Layer: 0
   m_Name: EnemyBattleStation
   m_TagString: Untagged
@@ -3182,7 +3184,7 @@ Transform:
   m_GameObject: {fileID: 720968026}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -950.4175, y: -543.37, z: 0}
+  m_LocalPosition: {x: -954.25, y: -538.63, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3240,6 +3242,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &720968029
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 720968026}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ccee253ff083e9e45ac8d4d553de6318, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &720968030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 720968026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920315a0e005cc941bbdc79c5866c848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitName: Taran
+  unitLevel: 999
+  damage: 20
+  specialDamage: 40
+  getHealth: 120
+  decrementHealth: 120
+  defensePercentage: 0
+  healingRate: 0
+  currentExperience: 0
+  maxExperience: 0
+  experienceValue: 100
+  isDefending: 0
 --- !u!1 &752451641
 GameObject:
   m_ObjectHideFlags: 0
@@ -41477,6 +41524,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1394464905}
   - component: {fileID: 1394464906}
+  - component: {fileID: 1394464908}
+  - component: {fileID: 1394464907}
   m_Layer: 0
   m_Name: PlayerBattleStation
   m_TagString: Untagged
@@ -41493,7 +41542,7 @@ Transform:
   m_GameObject: {fileID: 1394464904}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -968.6375, y: -543.31, z: 0}
+  m_LocalPosition: {x: -968.6375, y: -540.71, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41551,6 +41600,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1394464907
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1394464904}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c0cf82d661fe89e4a94cc28265267a7e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1394464908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1394464904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920315a0e005cc941bbdc79c5866c848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitName: Timtam
+  unitLevel: 6
+  damage: 25
+  specialDamage: 40
+  getHealth: 85
+  decrementHealth: 85
+  defensePercentage: 0.3
+  healingRate: 50
+  currentExperience: 200
+  maxExperience: 300
+  experienceValue: 0
+  isDefending: 0
 --- !u!1 &1427895886
 GameObject:
   m_ObjectHideFlags: 0
