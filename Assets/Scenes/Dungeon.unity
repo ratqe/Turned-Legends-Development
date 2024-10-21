@@ -16790,7 +16790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 668109357}
   - component: {fileID: 668109356}
-  - component: {fileID: 668109355}
+  - component: {fileID: 668109358}
   m_Layer: 0
   m_Name: LevelMoveLobby
   m_TagString: Untagged
@@ -16798,19 +16798,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &668109355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 668109354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 260212db2173566479cb82f16d481131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneBuildIndex: 6
 --- !u!61 &668109356
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -16871,6 +16858,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &668109358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668109354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 260212db2173566479cb82f16d481131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneBuildIndex: 6
 --- !u!1 &668439267
 GameObject:
   m_ObjectHideFlags: 0
@@ -18318,7 +18318,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238716525}
   - component: {fileID: 1238716524}
-  - component: {fileID: 1238716523}
+  - component: {fileID: 1238716526}
   m_Layer: 0
   m_Name: LevelMove
   m_TagString: Untagged
@@ -18326,19 +18326,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1238716523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1238716522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 260212db2173566479cb82f16d481131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneBuildIndex: 10
 --- !u!61 &1238716524
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -18399,6 +18386,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1238716526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238716522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 260212db2173566479cb82f16d481131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneBuildIndex: 0
 --- !u!224 &1251281249 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3813491197612474595, guid: 92ddec50856db4da2a22955b5da53ad0, type: 3}
