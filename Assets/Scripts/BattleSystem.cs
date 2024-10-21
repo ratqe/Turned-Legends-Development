@@ -718,6 +718,9 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
+        Time.timeScale = 1f;
+        isSpeedUp = false;
+        
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
