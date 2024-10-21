@@ -12,7 +12,10 @@ public class LevelLoader : MonoBehaviour
     public Slider progressBar;
 
     // Minimum time the loading screen shows
-    public float minimumLoadingTime = 2f;
+    public float minimumLoadingTime = 1f;
+    
+    // The scene index for loading
+    public int sceneToLoad;
 
     // Method to initiate the level loading process
     public void LoadLevel(int sceneIndex)
@@ -74,6 +77,16 @@ public class LevelLoader : MonoBehaviour
         if (loadingScreen != null)
         {
             loadingScreen.SetActive(false);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Check if the object entering the trigger is tagged as "Player"
+        if (other.CompareTag("Player"))
+        {
+            // Call the LoadLevel method with the specified scene index
+            LoadLevel(sceneToLoad);
         }
     }
 }
