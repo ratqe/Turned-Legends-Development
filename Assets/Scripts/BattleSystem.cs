@@ -66,6 +66,7 @@ public class BattleSystem : MonoBehaviour
 
     void Start()
     {
+        speedUpButton.onClick.RemoveAllListeners();
         state = BattleState.START;
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
@@ -99,22 +100,42 @@ public class BattleSystem : MonoBehaviour
 
 
 
+    private bool isButtonPressed = false;  // Flag to prevent multiple triggers
+
     public void ToggleSpeed()
     {
+        if (isButtonPressed)
+        {
+            return;  
+        }
+        
+        isButtonPressed = true;  
 
+        Debug.Log("ToggleSpeed() called.");
 
-        if (!isSpeedUp)
+        if (isSpeedUp)
         {
             Time.timeScale = 1f;
-            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";  // Update button text
+            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Speed Up";
+            Debug.Log("Speed set to normal.");
         }
         else
         {
-            Time.timeScale = 10f;
-            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Speed Up";  // Update button text
+            Time.timeScale = 5f;
+            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";
+            Debug.Log("Speed set to fast.");
         }
 
-        isSpeedUp = !isSpeedUp;  // Toggle the speed flag
+        isSpeedUp = !isSpeedUp;
+
+        // Re-enable button after a short delay
+        StartCoroutine(ResetButtonPress());
+    }
+
+    private IEnumerator ResetButtonPress()
+    {
+        yield return new WaitForSeconds(0.2f);  
+        isButtonPressed = false;  // Re-enable the button press
     }
 
 
@@ -134,7 +155,8 @@ public class BattleSystem : MonoBehaviour
         dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
-        
+        enemyAttackCount = 0;
+        attackCount = 0;
         yield return new WaitForSeconds(2f);
 
         state = BattleState.PLAYERTURN;
@@ -216,6 +238,8 @@ public class BattleSystem : MonoBehaviour
             yield return null;
         }
 
+        enemyBattleStation.rotation = Quaternion.identity;
+
         // Move the player back to the original position
         elapsedTime = 0f;
         while (elapsedTime < moveDuration)
@@ -246,6 +270,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
+        enemyBattleStation.rotation = Quaternion.identity;
         dialogueText.text = enemyUnit.unitName + " is preparing an attack!";
         enemyAttackCount++;  // Increment the enemy's attack counter
 
@@ -259,44 +284,18 @@ public class BattleSystem : MonoBehaviour
 
         float damage = enemyUnit.damage;  // Enemy's base damage
 
-        // Define waypoints for the enemy to move around before attacking
-        Vector3[] waypoints = new Vector3[]
+        // Move the enemy to a special attack position
+        Vector3 originalPosition = enemyBattleStation.position;
+        Vector3 specialAttackPosition = playerBattleStation.position + new Vector3(2f, 0, 0);  // Enemy gets closer
+
+        float moveDuration = 0.7f;
+        float elapsedTime = 0f;
+
+        // Move the enemy closer for the special attack
+        while (elapsedTime < moveDuration)
         {
-            enemyBattleStation.position + new Vector3(3f, 0, 0),  // Right
-            enemyBattleStation.position + new Vector3(3f, 2f, 0),  // Up
-            enemyBattleStation.position + new Vector3(-3f, 2f, 0),  // Left
-            enemyBattleStation.position + new Vector3(-3f, 0, 0)   // Down
-        };
-
-        float moveDuration = 0.5f;
-
-        // Move the enemy around the waypoints
-        foreach (Vector3 waypoint in waypoints)
-        {
-            float elapsedTime = 0f;
-            Vector3 originalPosition = enemyBattleStation.position;
-
-            while (elapsedTime < moveDuration)
-            {
-                enemyBattleStation.position = Vector3.Lerp(originalPosition, waypoint, (elapsedTime / moveDuration));
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            originalPosition = waypoint;
-        }
-
-        // After moving around, move the enemy closer to the player for the attack
-        Vector3 attackPosition = playerBattleStation.position + new Vector3(2f, 0, 0);  // Adjust the X value as needed
-
-        float attackMoveDuration = 0.9f;  // Duration for the movement toward the player
-        float elapsedAttackTime = 0f;
-
-        // Smoothly move the enemy toward the player
-        while (elapsedAttackTime < attackMoveDuration)
-        {
-            enemyBattleStation.position = Vector3.Lerp(enemyBattleStation.position, attackPosition, (elapsedAttackTime / attackMoveDuration));
-            elapsedAttackTime += Time.deltaTime;
+            enemyBattleStation.position = Vector3.Lerp(originalPosition, specialAttackPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
@@ -320,14 +319,11 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 
-        // Move the enemy back to a closer position after the attack
-        Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
-
-        float returnMoveDuration = 0.5f;
+        // Move the enemy back after the special attack
         elapsedTime = 0f;
-        while (elapsedTime < returnMoveDuration)
+        while (elapsedTime < moveDuration)
         {
-            enemyBattleStation.position = Vector3.Lerp(attackPosition, closerPosition, (elapsedTime / returnMoveDuration));
+            enemyBattleStation.position = Vector3.Lerp(specialAttackPosition, originalPosition, (elapsedTime / moveDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -366,7 +362,7 @@ public class BattleSystem : MonoBehaviour
         }
 
         // Trigger the special attack animation
-        anim.SetTrigger("EnemySpecialAttack");
+        anim.SetTrigger("Enemy1Attack");
 
         yield return new WaitForSeconds(1f);
 
@@ -722,6 +718,9 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
+        Time.timeScale = 1f;
+        isSpeedUp = false;
+        
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
