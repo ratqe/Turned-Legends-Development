@@ -723,6 +723,9 @@ public class BattleSystem2 : MonoBehaviour
             dialogueText.text = "You were defeated :/";
             yield return new WaitForSeconds(3f);
 
+            Time.timeScale = 1f;
+            isSpeedUp = false;
+            
             SceneManager.LoadScene(6);
             MusicManager musicManager = FindObjectOfType<MusicManager>();
             if (musicManager != null)
