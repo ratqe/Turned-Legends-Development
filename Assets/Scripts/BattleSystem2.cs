@@ -773,7 +773,9 @@ public class BattleSystem2 : MonoBehaviour
 
     public void ExitButton()
     {
-        
+        Time.timeScale = 1f;
+        isSpeedUp = false;
+
         SceneManager.LoadScene(6); // Load back to lobby
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
