@@ -141,17 +141,35 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator SetupBattle()
     {
-        GameObject playerGO = Instantiate(playerPrefab, playerBattleStation);
-        playerUnit = playerGO.GetComponent<Unit>();
+        // Get player and enemy units directly from their respective battle stations
+        if (playerUnit == null)
+        {
+            // Find the Unit component on the PlayerBattleStation
+            playerUnit = playerBattleStation.GetComponent<Unit>();
+            playerAnim = playerBattleStation.GetComponent<Animator>();
 
-        GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
-        enemyUnit = enemyGO.GetComponent<Unit>();
+            // Store the original player position for future reference
+            playerSpawnPosition = playerBattleStation.position;
+        }
+        else
+        {
+            // Reset player's position and other stats if needed
+            playerUnit.transform.position = playerSpawnPosition;
+            playerUnit.ResetForNewBattle();  // Custom method to reset health/stats
+        }
 
-        anim = enemyGO.GetComponent<Animator>();
-        playerAnim = playerGO.GetComponent<Animator>();
+        if (enemyUnit == null)
+        {
+            // Similar approach for the enemy battle station
+            enemyUnit = enemyBattleStation.GetComponent<Unit>();
+            anim = enemyBattleStation.GetComponent<Animator>();
+        }
+        else
+        {
+            enemyUnit.transform.position = enemyBattleStation.position;
+            enemyUnit.ResetForNewBattle();  // Custom method to reset health/stats
+        }
 
-        // player original position 
-        playerSpawnPosition = playerBattleStation.position;
         dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
@@ -710,10 +728,12 @@ public class BattleSystem : MonoBehaviour
         if (state == BattleState.WON)
         {
             dialogueText.text = "You won the battle! Congrats!";
+            PlayerWins();
         }
         else if (state == BattleState.LOST)
         {
             dialogueText.text = "You were defeated :/";
+            PlayerLoses();
         }
 
         yield return new WaitForSeconds(3f);
@@ -757,7 +777,28 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    private void PlayerWins()
+    {
+        // Get the experience value from the enemy unit
+        int experienceGained = enemyUnit.experienceValue;
 
+        // Add experience to the player's unit
+        playerUnit.GainExperience(experienceGained);
+
+        //ExperienceManager.Instance.AddExperience(experienceGained);
+
+        // Display the message in the dialogue box
+        dialogueText.text = "You won the battle! Gained " + experienceGained + " XP!";
+
+        // You can add any other logic here, such as rewards, transitioning, etc.
+    }
+
+    private void PlayerLoses()
+    {
+        dialogueText.text = "You lost the battle...";
+
+        // Add any logic for what happens when the player loses (e.g., game over)
+    }
 
 
 
