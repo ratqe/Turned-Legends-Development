@@ -49,6 +49,7 @@ public class BattleSystem : MonoBehaviour
     private Vector3 playerSpawnPosition;
     //[SerializeField]
     //private string battleScene = "Battle 1";
+    public int sceneBuildIndex;
 
 
     // Array of random gameplay tips
@@ -683,7 +684,7 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load the Lobby scene
-        // SceneManager.LoadScene(battleScene);
+        SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
 
         // Reference to the BattleTrigger script to handle the flee action
         BattleTrigger battleTrigger = FindObjectOfType<BattleTrigger>();
