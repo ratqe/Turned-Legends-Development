@@ -13,6 +13,9 @@ public class Unit : MonoBehaviour
     public float defensePercentage;
     public int healingRate;
 
+    public int currentExperience;  // Player's current XP
+    public int maxExperience;      // XP needed to level up
+    public int experienceValue = 100;    // XP awarded when enemy is defeated
 
     public bool isDefending = false;  // Add this flag
 
@@ -45,5 +48,42 @@ public class Unit : MonoBehaviour
         }
 			
 	}
+
+    // Method to gain experience
+    public void GainExperience(int amount)
+    {
+        currentExperience += amount;
+
+        // Check if we've gained enough experience to level up
+        if (currentExperience >= maxExperience)
+        {
+            LevelUp();
+        }
+    }
+
+    // Level-up logic
+    public void LevelUp()
+    {
+        // Increase stats on level-up (you can adjust these increments)
+        unitLevel++;
+        getHealth += 10;
+        damage += 2;
+        specialDamage += 1;
+
+        // Heal the unit to full on level-up
+        decrementHealth = getHealth;
+
+        // Reset experience and increase maxExperience for the next level
+        currentExperience = 0;
+        maxExperience += 300;  // Increase how much XP is required for the next level
+    }
+
+    public void ResetForNewBattle()
+    {
+        // Reset health and any other stats needed for a new battle
+        decrementHealth = getHealth;
+        currentExperience = 0;
+        isDefending = false;
+    }
 }
 
