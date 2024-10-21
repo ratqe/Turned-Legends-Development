@@ -797,6 +797,12 @@ public class BattleSystem : MonoBehaviour
     {
         dialogueText.text = "You lost the battle...";
 
+        Time.timeScale = 1f;
+        isSpeedUp = false;
+
+        // Load the Lobby scene
+        SceneManager.LoadScene(6);
+
         // Add any logic for what happens when the player loses (e.g., game over)
     }
 
