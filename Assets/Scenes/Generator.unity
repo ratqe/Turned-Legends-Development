@@ -547,7 +547,7 @@ MonoBehaviour:
   state: 0
   playerDamageText: {fileID: 1098421586}
   enemyDamageText: {fileID: 598309816}
-  sceneBuildIndex: 0
+  sceneBuildIndex: 6
 --- !u!1 &66633080
 GameObject:
   m_ObjectHideFlags: 0
