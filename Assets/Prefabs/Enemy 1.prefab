@@ -48,11 +48,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitName: Ivon
-  unitLevel: 8
-  damage: 8
-  getHealth: 40
-  decrementHealth: 40
-  maxHealth: 0
+  unitLevel: 999
+  damage: 20
+  specialDamage: 30
+  getHealth: 90
+  decrementHealth: 90
+  defensePercentage: 0
+  healingRate: 0
   isDefending: 0
 --- !u!95 &773733828683995868
 Animator:
@@ -115,7 +117,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_Sprite: {fileID: 21300000, guid: 84ce2f114ad12bd4ebafc77060220324, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

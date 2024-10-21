@@ -20,16 +20,15 @@ public class BattleSystem : MonoBehaviour
 
     public Text dialogueText;
     public TextMeshProUGUI tipText;  // UI Text element for random tips using TextMeshPro
+
     public BattleHUD playerHUD;
     public BattleHUD enemyHUD;
-    public Button speedUpButton;
+
     public AudioClip newSong;
+    public Button speedUpButton;
     public Button detailsButton;  // Reference to the Details button
     public GameObject popupPanel; // Reference to the Panel acting as a popup
     public TextMeshProUGUI popupText;  // The Text component in the popup panel (if using TextMeshPro)
-
-
-
 
     public BattleState state;
 
@@ -37,20 +36,20 @@ public class BattleSystem : MonoBehaviour
     private Animator playerAnim;
     public Text playerDamageText;
     public Text enemyDamageText;
-    private bool hasAttacked = false;  // Flag to track if the player has attacked 
+
     private int attackCount = 0;  // Counter to track the number of attacks
     private int defendCount = 0;
     private int enemyAttackCount = 0;
+
+    private bool hasAttacked = false;  // Flag to track if the player has attacked 
     private bool isSpeedUp = false;
-
-
+    private bool combatStarted = false;
     private bool buttonAction = false;
 
     private Vector3 playerSpawnPosition;
-    [SerializeField]
-    private string battleScene = "Battle 1";
+    //[SerializeField]
+    //private string battleScene = "Battle 1";
 
-    public GameObject endBattlePanel;
 
     // Array of random gameplay tips
     private string[] tips = {
@@ -67,7 +66,6 @@ public class BattleSystem : MonoBehaviour
     void Start()
     {
         state = BattleState.START;
-        StartCoroutine(SetupBattle());
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
@@ -77,11 +75,22 @@ public class BattleSystem : MonoBehaviour
         speedUpButton.onClick.AddListener(ToggleSpeed);
         detailsButton.onClick.AddListener(ShowDetailsPopup);
     }
+
+    public void StartBattleFromTrigger()
+    {
+        if (!combatStarted)
+        {
+            combatStarted = true;
+            StartCoroutine(SetupBattle());
+        }
+    }
+
     public void ShowDetailsPopup()
     {
         popupText.text = "Hello";  // Set the text in the popup
         popupPanel.SetActive(true); // Show the popup panel
     }
+
     public void HidePopup()
     {
         popupPanel.SetActive(false); // Hide the popup panel
@@ -118,17 +127,19 @@ public class BattleSystem : MonoBehaviour
 
         anim = enemyGO.GetComponent<Animator>();
         playerAnim = playerGO.GetComponent<Animator>();
+
         // player original position 
         playerSpawnPosition = playerBattleStation.position;
         dialogueText.text = "An enemy " + enemyUnit.unitName + " approaches!";
-
         playerHUD.SetHUD(playerUnit);
         enemyHUD.SetHUD(enemyUnit);
+        
         yield return new WaitForSeconds(2f);
 
         state = BattleState.PLAYERTURN;
         PlayerTurn();
     }
+
 
     void PlayerTurn()
     {
@@ -301,7 +312,7 @@ public class BattleSystem : MonoBehaviour
         float finalDamage = damage;
         if (playerUnit.isDefending)
         {
-            finalDamage = (int)(damage * 0.5f);
+            finalDamage = (int)(damage * (1 - playerUnit.defensePercentage));
         }
         playerDamageText.text = "-" + finalDamage.ToString() + " HP";
 
@@ -336,7 +347,7 @@ public class BattleSystem : MonoBehaviour
     IEnumerator EnemySpecialAttack()
     {
         dialogueText.text = enemyUnit.unitName + " is charging a powerful attack!";
-        int specialDamage = enemyUnit.damage * 3;  // Stronger special attack damage
+        int specialDamage = enemyUnit.specialDamage;
 
         // Move the enemy to a special attack position
         Vector3 originalPosition = enemyBattleStation.position;
@@ -358,13 +369,20 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        // Calculate final damage base on the player set defense
+        float finalDamage = specialDamage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(specialDamage * (1 - playerUnit.defensePercentage));
+        }
+        
         // Apply special attack damage to the player
-        bool isDead = playerUnit.TakeDamage(specialDamage);
+        bool isDead = playerUnit.TakeDamage((int)finalDamage);
         playerHUD.SetHP(playerUnit.decrementHealth);
 
         dialogueText.text = "The enemy deals a massive blow!";
 
-        playerDamageText.text = "-" + specialDamage.ToString() + " HP";
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
 
@@ -399,7 +417,7 @@ public class BattleSystem : MonoBehaviour
     {
         DisplayRandomTip();  // Show a random tip when the special attack starts
 
-        int damage = playerUnit.damage * 3;  // Stronger final blow
+        int specialDamage = playerUnit.specialDamage;
 
         Vector3 originalPosition = playerBattleStation.position;
 
@@ -447,9 +465,9 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // Deal the final blow to the enemy
-        enemyDamageText.text = "-" + damage.ToString() + " HP";
-        bool isDead = enemyUnit.TakeDamage(damage);
+        // Apply special attack damage to the enemy
+        enemyDamageText.text = "-" + specialDamage.ToString() + " HP";
+        bool isDead = enemyUnit.TakeDamage(specialDamage);
         enemyHUD.SetHP(enemyUnit.decrementHealth);
         dialogueText.text = "A devastating blow!";
 
@@ -510,10 +528,10 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerHeal()
     {
-        playerUnit.Heal(24);
+        playerUnit.Heal();
 
         playerHUD.SetHP(playerUnit.decrementHealth);
-        dialogueText.text = "Regenerate! Heal for 24 HP!";
+        dialogueText.text = "Regenerate! Heal for " + playerUnit.healingRate;
 
         yield return new WaitForSeconds(2f);
 
@@ -554,9 +572,9 @@ public class BattleSystem : MonoBehaviour
         }
 
         // will check if the player has defended at least twice
-        if (defendCount < 2)
+        if (defendCount < 1)
         {
-            dialogueText.text = "Defend twice first before healing!";
+            dialogueText.text = "Defend once first before healing!";
             return;
         }
 
@@ -665,8 +683,16 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load the Lobby scene
-        SceneManager.LoadScene(battleScene);
+        // SceneManager.LoadScene(battleScene);
 
+        // Reference to the BattleTrigger script to handle the flee action
+        BattleTrigger battleTrigger = FindObjectOfType<BattleTrigger>();
+        if (battleTrigger != null)
+        {
+            battleTrigger.FleeFromBattle();  // Call the FleeFromBattle method
+        }
+
+        // Additional cleanup if needed (like stopping the battle music)
         MusicManager musicManager = FindObjectOfType<MusicManager>();
         if (musicManager != null)
         {
@@ -674,66 +700,68 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    public void ResetBattleSystem()
+    {
+        combatStarted = false; 
+        state = BattleState.START; 
+        hasAttacked = false; 
+    }
+
+
     IEnumerator EndBattle()
     {
         if (state == BattleState.WON)
         {
-            dialogueText.text = "You won the battle congrats!!!!";
-            // Displaying options for continuing the battle or exiting
-            EndBattleOptions();
+            dialogueText.text = "You won the battle! Congrats!";
         }
         else if (state == BattleState.LOST)
         {
             dialogueText.text = "You were defeated :/";
-            yield return new WaitForSeconds(3f);
-
-            SceneManager.LoadScene(battleScene);
-            MusicManager musicManager = FindObjectOfType<MusicManager>();
-            if (musicManager != null)
-            {
-                musicManager.RevertToOriginalSong();
-            }
         }
 
+        yield return new WaitForSeconds(3f);
 
+        MusicManager musicManager = FindObjectOfType<MusicManager>();
+        if (musicManager != null)
+        {
+            musicManager.RevertToOriginalSong();
+        }
+
+        // Reset the battle system state
+        BattleSystem battleSystem = FindObjectOfType<BattleSystem>();
+        if (battleSystem != null)
+        {
+            battleSystem.ResetBattleSystem();
+        }
+
+        // Reset the battle trigger
+        BattleTrigger battleTrigger = FindObjectOfType<BattleTrigger>();
+        if (battleTrigger != null)
+        {
+            battleTrigger.EndCombat(true); //reset the player position and other UI elements
+        }
+
+        // Return player to original position (before battle started)
+        PlayerControl playerControl = FindObjectOfType<PlayerControl>();
+        if (playerControl != null)
+        {
+            playerControl.transform.position = battleTrigger.playerPositionBeforeBattle; // Restore saved position
+        }
+
+        // Reset the enemy trigger to allow for new encounters after a short delay
+        yield return new WaitForSeconds(1f); 
+        EnemyTrigger enemyTrigger = FindObjectOfType<EnemyTrigger>();
+        if (enemyTrigger != null)
+        {
+            enemyTrigger.ResetTrigger(); // Re-enable enemy trigger
+        }
     }
 
-    IEnumerator SetupNewBattle()
-    {
-        Destroy(enemyBattleStation.GetChild(0).gameObject); // Remove the defeated enemy
-
-        GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
-        enemyUnit = enemyGO.GetComponent<Unit>();
-
-        anim = enemyGO.GetComponent<Animator>();
-
-        dialogueText.text = "A new enemy " + enemyUnit.unitName + " appears!";
-
-        playerHUD.SetHUD(playerUnit);
-        enemyHUD.SetHUD(enemyUnit);
-        yield return new WaitForSeconds(2f);
-
-        state = BattleState.PLAYERTURN;
-        PlayerTurn();
-    }
 
 
 
-    void EndBattleOptions()
-    {
-        endBattlePanel.SetActive(true); // Show the panel when the battle ends
-    }
 
-    public void ContinueButton()
-    {
-        endBattlePanel.SetActive(false); // Hide the panel
-        StartCoroutine(SetupNewBattle()); // starts a new battle 
-    }
 
-    public void ExitButton()
-    {
-        SceneManager.LoadScene(6); // Load back to lobby
-    }
 
 
 
