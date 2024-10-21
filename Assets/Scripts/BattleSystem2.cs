@@ -65,6 +65,7 @@ public class BattleSystem2 : MonoBehaviour
 
     void Start()
     {
+        speedUpButton.onClick.RemoveAllListeners();
         state = BattleState2.START;
         StartCoroutine(SetupBattle());
         MusicManager musicManager = FindObjectOfType<MusicManager>();
@@ -88,23 +89,44 @@ public class BattleSystem2 : MonoBehaviour
 
 
 
+    private bool isButtonPressed = false;  // Flag to prevent multiple triggers
+
     public void ToggleSpeed()
     {
+        if (isButtonPressed)
+        {
+            return;  
+        }
+        
+        isButtonPressed = true;  
 
+        Debug.Log("ToggleSpeed() called.");
 
-        if (!isSpeedUp)
+        if (isSpeedUp)
         {
             Time.timeScale = 1f;
-            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";  // Update button text
+            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Speed Up";
+            Debug.Log("Speed set to normal.");
         }
         else
         {
-            Time.timeScale = 10f;
-            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Speed Up";  // Update button text
+            Time.timeScale = 5f;
+            speedUpButton.GetComponentInChildren<TextMeshProUGUI>().text = "Normal Speed";
+            Debug.Log("Speed set to fast.");
         }
 
-        isSpeedUp = !isSpeedUp;  // Toggle the speed flag
+        isSpeedUp = !isSpeedUp;
+
+        // Re-enable button after a short delay
+        StartCoroutine(ResetButtonPress());
     }
+
+    private IEnumerator ResetButtonPress()
+    {
+        yield return new WaitForSeconds(0.2f); 
+        isButtonPressed = false;  // Re-enable the button press
+    }
+
 
 
     IEnumerator SetupBattle()
@@ -191,6 +213,8 @@ public class BattleSystem2 : MonoBehaviour
             yield return null;
         }
 
+        //enemyBattleStation.rotation = originalRotation;
+        
         yield return new WaitForSeconds(0.5f);  // Pause for a moment to let the enemy stay on the ground
         // Rest of the attack sequence...
 
@@ -202,6 +226,8 @@ public class BattleSystem2 : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        enemyBattleStation.rotation = Quaternion.identity;
 
         // Move the player back to the original position
         elapsedTime = 0f;
@@ -233,6 +259,7 @@ public class BattleSystem2 : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
+        enemyBattleStation.rotation = Quaternion.identity;
         dialogueText.text = enemyUnit.unitName + " is preparing an attack!";
         enemyAttackCount++;  // Increment the enemy's attack counter
 
@@ -246,6 +273,68 @@ public class BattleSystem2 : MonoBehaviour
 
         float damage = enemyUnit.damage;  // Enemy's base damage
 
+        // Move the enemy to a special attack position
+        Vector3 originalPosition = enemyBattleStation.position;
+        Vector3 specialAttackPosition = playerBattleStation.position + new Vector3(2f, 0, 0);  // Enemy gets closer
+
+        float moveDuration = 0.7f;
+        float elapsedTime = 0f;
+
+        // Move the enemy closer for the special attack
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(originalPosition, specialAttackPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Trigger attack animation for the enemy
+        anim.SetTrigger("Enemy1Attack");
+
+        // Let the attack animation play
+        yield return new WaitForSeconds(0.6f);
+
+        // Apply damage to the player
+        bool isDead = playerUnit.TakeDamage((int)damage);
+        playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
+
+        float finalDamage = damage;
+        if (playerUnit.isDefending)
+        {
+            finalDamage = (int)(damage * (1 - playerUnit.defensePercentage));
+        }
+        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
+
+        yield return new WaitForSeconds(1f);
+        playerDamageText.text = "";
+
+        // Move the enemy back after the special attack
+        elapsedTime = 0f;
+        while (elapsedTime < moveDuration)
+        {
+            enemyBattleStation.position = Vector3.Lerp(specialAttackPosition, originalPosition, (elapsedTime / moveDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Check if the player is dead
+        if (isDead)
+        {
+            state = BattleState2.LOST;
+            StartCoroutine(EndBattle());
+        }
+        else
+        {
+            state = BattleState2.PLAYERTURN;
+            PlayerTurn();
+        }
+    }
+
+    IEnumerator EnemySpecialAttack()
+    {
+
+        dialogueText.text = enemyUnit.unitName + " is charging a powerful attack!";
+        int specialDamage = enemyUnit.specialDamage;
         // Define waypoints for the enemy to move around before attacking
         Vector3[] waypoints = new Vector3[]
         {
@@ -286,74 +375,10 @@ public class BattleSystem2 : MonoBehaviour
             elapsedAttackTime += Time.deltaTime;
             yield return null;
         }
-
-        // Trigger attack animation for the enemy
-        anim.SetTrigger("Enemy1Attack");
-
-        // Let the attack animation play
-        yield return new WaitForSeconds(0.6f);
-
-        // Apply damage to the player
-        bool isDead = playerUnit.TakeDamage((int)damage);
-        playerHUD.SetHP(playerUnit.decrementHealth);  // Update the player's HUD
-
-        float finalDamage = damage;
-        if (playerUnit.isDefending)
-        {
-            finalDamage = (int)(damage * (1 - playerUnit.defensePercentage));
-        }
-        playerDamageText.text = "-" + finalDamage.ToString() + " HP";
-
-        yield return new WaitForSeconds(1f);
-        playerDamageText.text = "";
-
-        // Move the enemy back to a closer position after the attack
-        Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
-
-        float returnMoveDuration = 0.5f;
-        elapsedTime = 0f;
-        while (elapsedTime < returnMoveDuration)
-        {
-            enemyBattleStation.position = Vector3.Lerp(attackPosition, closerPosition, (elapsedTime / returnMoveDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // Check if the player is dead
-        if (isDead)
-        {
-            state = BattleState2.LOST;
-            StartCoroutine(EndBattle());
-        }
-        else
-        {
-            state = BattleState2.PLAYERTURN;
-            PlayerTurn();
-        }
-    }
-
-    IEnumerator EnemySpecialAttack()
-    {
-        dialogueText.text = enemyUnit.unitName + " is charging a powerful attack!";
-        int specialDamage = enemyUnit.specialDamage;
-
-        // Move the enemy to a special attack position
-        Vector3 originalPosition = enemyBattleStation.position;
-        Vector3 specialAttackPosition = playerBattleStation.position + new Vector3(1f, 0, 0);  // Enemy gets closer
-
-        float moveDuration = 0.7f;
-        float elapsedTime = 0f;
-
-        // Move the enemy closer for the special attack
-        while (elapsedTime < moveDuration)
-        {
-            enemyBattleStation.position = Vector3.Lerp(originalPosition, specialAttackPosition, (elapsedTime / moveDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
+ 
 
         // Trigger the special attack animation
-        anim.SetTrigger("EnemySpecialAttack");
+        anim.SetTrigger("Enemy1Attack");
 
         yield return new WaitForSeconds(1f);
 
@@ -373,15 +398,18 @@ public class BattleSystem2 : MonoBehaviour
         playerDamageText.text = "-" + finalDamage.ToString() + " HP";
         yield return new WaitForSeconds(1f);
         playerDamageText.text = "";
+        // Move the enemy back to a closer position after the attack
+        Vector3 closerPosition = playerBattleStation.position + new Vector3(10f, 0, 0);  // Keep the enemy closer to the player
 
-        // Move the enemy back after the special attack
+        float returnMoveDuration = 0.5f;
         elapsedTime = 0f;
-        while (elapsedTime < moveDuration)
+        while (elapsedTime < returnMoveDuration)
         {
-            enemyBattleStation.position = Vector3.Lerp(specialAttackPosition, originalPosition, (elapsedTime / moveDuration));
+            enemyBattleStation.position = Vector3.Lerp(attackPosition, closerPosition, (elapsedTime / returnMoveDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+ 
 
         // Check if the player is dead
         if (isDead)
@@ -486,6 +514,8 @@ public class BattleSystem2 : MonoBehaviour
             elapsedTimeFall += Time.deltaTime;
             yield return null;
         }
+
+        enemyBattleStation.rotation = Quaternion.identity;
 
         // Move the player back to the original spawn position after the attack
         elapsedAttackTime = 0f;
