@@ -12,7 +12,7 @@ public class CameraFollow : MonoBehaviour
 
     private Vector3 targetPosition;
 
-    void Update()
+    public void Update()
     {
         //if (!isInCombat)  // Disable camera follow during combat
         //{
